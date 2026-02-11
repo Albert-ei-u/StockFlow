@@ -5,6 +5,12 @@ import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 
+// Import routes directly
+import productRoutes from './routes/products.js';
+import saleRoutes from './routes/sales.js';
+import inventoryRoutes from './routes/inventory.js';
+import reportRoutes from './routes/reports.js';
+
 dotenv.config();
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
@@ -20,10 +26,10 @@ mongoose.connect(process.env.MONGO_URI || "mongodb://localhost:27017/salesflow")
     .catch((err) => console.log(err));
 
 // Routes
-app.use('/api/products', (await import('./routes/products.js')).default);
-app.use('/api/sales', (await import('./routes/sales.js')).default);
-app.use('/api/inventory', (await import('./routes/inventory.js')).default);
-app.use('/api/reports', (await import('./routes/reports.js')).default);
+app.use('/api/products', productRoutes);
+app.use('/api/sales', saleRoutes);
+app.use('/api/inventory', inventoryRoutes);
+app.use('/api/reports', reportRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -1,0 +1,251 @@
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Building, Mail, Lock, User, ArrowLeft } from 'lucide-react';
+
+const JoinBusiness = ({ onLogin }) => {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    businessCode: '',
+    businessName: '',
+    businessDescription: ''
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      // Simulate API call - replace with actual API call
+      const response = await fetch('http://localhost:5000/api/auth/join-business', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          businessCode: formData.businessCode,
+          businessName: formData.businessName,
+          businessDescription: formData.businessDescription
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        onLogin(data.user, data.token);
+      } else {
+        setError(data.message || 'Failed to join business');
+      }
+    } catch (err) {
+      setError('Network error. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100 flex items-center justify-center p-4">
+      <div className="max-w-md w-full space-y-8">
+        {/* Header */}
+        <div className="text-center">
+          <Link to="/register" className="inline-flex items-center text-purple-600 hover:text-purple-700 mb-4">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Register
+          </Link>
+          <div className="mx-auto h-16 w-16 bg-purple-600 rounded-full flex items-center justify-center mb-4">
+            <Building className="h-8 w-8 text-white" />
+          </div>
+          <h2 className="text-3xl font-bold text-gray-900">Join Business</h2>
+          <p className="mt-2 text-gray-600">Connect with your existing business team</p>
+        </div>
+
+        {/* Join Business Form */}
+        <div className="bg-white rounded-xl shadow-lg p-8">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
+                {error}
+              </div>
+            )}
+
+            {/* Personal Information */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium text-gray-900">Personal Information</h3>
+              
+              {/* Name Field */}
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                  Full Name
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <User className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    required
+                    value={formData.name}
+                    onChange={handleChange}
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition"
+                    placeholder="John Doe"
+                  />
+                </div>
+              </div>
+
+              {/* Email Field */}
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  Email Address
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Mail className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition"
+                    placeholder="you@example.com"
+                  />
+                </div>
+              </div>
+
+              {/* Password Field */}
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                  Password
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Lock className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    required
+                    value={formData.password}
+                    onChange={handleChange}
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition"
+                    placeholder="••••••••"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Business Information */}
+            <div className="space-y-4 pt-4 border-t border-gray-200">
+              <h3 className="text-lg font-medium text-gray-900">Business Information</h3>
+              
+              {/* Business Code Field */}
+              <div>
+                <label htmlFor="businessCode" className="block text-sm font-medium text-gray-700 mb-2">
+                  Business Code
+                </label>
+                <input
+                  id="businessCode"
+                  name="businessCode"
+                  type="text"
+                  required
+                  value={formData.businessCode}
+                  onChange={handleChange}
+                  className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition"
+                  placeholder="Enter your business code"
+                />
+                <p className="mt-1 text-sm text-gray-500">
+                  Ask your business administrator for this code
+                </p>
+              </div>
+
+              {/* Business Name Field */}
+              <div>
+                <label htmlFor="businessName" className="block text-sm font-medium text-gray-700 mb-2">
+                  Business Name
+                </label>
+                <input
+                  id="businessName"
+                  name="businessName"
+                  type="text"
+                  required
+                  value={formData.businessName}
+                  onChange={handleChange}
+                  className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition"
+                  placeholder="My Business Inc."
+                />
+              </div>
+
+              {/* Business Description Field */}
+              <div>
+                <label htmlFor="businessDescription" className="block text-sm font-medium text-gray-700 mb-2">
+                  Business Description (Optional)
+                </label>
+                <textarea
+                  id="businessDescription"
+                  name="businessDescription"
+                  rows={3}
+                  value={formData.businessDescription}
+                  onChange={handleChange}
+                  className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition"
+                  placeholder="Brief description of your business..."
+                />
+              </div>
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition"
+            >
+              {loading ? (
+                <div className="flex items-center">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Joining business...
+                </div>
+              ) : (
+                'Join Business'
+              )}
+            </button>
+          </form>
+
+          {/* Login Link */}
+          <div className="mt-6 text-center">
+            <p className="text-sm text-gray-600">
+              Already have an account?{' '}
+              <Link to="/login" className="font-medium text-purple-600 hover:text-purple-500">
+                Sign in
+              </Link>
+            </p>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="text-center text-sm text-gray-500">
+          <p>&copy; 2024 SalesFlow. All rights reserved.</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default JoinBusiness;

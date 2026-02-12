@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { TrendingUp, Package, DollarSign, AlertTriangle } from 'lucide-react';
 import Layout from '../components/Layout';
-import { reportAPI, inventoryAPI } from '../services/api.js';
-import { SalesSummary, Inventory } from '../types.js';
+import { reportAPI, inventoryAPI } from '../services/api';
+import { SalesSummary, Inventory } from '../types';
 
 const Dashboard: React.FC = () => {
   const [salesSummary, setSalesSummary] = useState<SalesSummary | null>(null);

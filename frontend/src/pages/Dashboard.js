@@ -12,7 +12,6 @@ import {
   Menu,
   X,
   BarChart3,
-  PieChart,
   Activity
 } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, PieChart as RePieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';

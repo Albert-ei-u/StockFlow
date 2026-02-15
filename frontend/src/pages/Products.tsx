@@ -52,7 +52,7 @@ const Products: React.FC = () => {
           <div className="sm:flex-auto">
             <h1 className="text-2xl font-bold text-gray-900">Products</h1>
             <p className="mt-1 text-sm text-gray-600">
-              Manage your product inventory
+              Manage your product inventory 
             </p>
           </div>
           <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">

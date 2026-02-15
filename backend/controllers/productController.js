@@ -47,7 +47,7 @@ export const createProduct = async (req, res) => {
 };
 
 // @desc    Update product
-//@route   PUT /api/products/:id
+//@route  PUT /api/products/:id
 export const updateProduct = async (req, res) => {
     try {
         const product = await Product.findByIdAndUpdate(req.params.id, req.body, { 

@@ -59,6 +59,7 @@ function App() {
             path="/new-sale" 
             element={isAuthenticated ? <NewSale user={user} /> : <Navigate to="/login" />} 
           />
+          
           <Route 
             path="/" 
             element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} />} 

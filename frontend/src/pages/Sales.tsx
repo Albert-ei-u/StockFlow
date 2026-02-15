@@ -12,7 +12,7 @@ const Sales: React.FC = () => {
   useEffect(() => {
     fetchSales();
   }, []);
-
+//fetch sales
   const fetchSales = async () => {
     try {
       const response = await saleAPI.getAll();

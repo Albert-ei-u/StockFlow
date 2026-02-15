@@ -65,6 +65,7 @@ const NewSale = ({ user }) => {
           p.id === product.id 
             ? { ...p, quantity: p.quantity + 1, subtotal: (p.quantity + 1) * p.price }
             : p
+            
         ));
       }
     } else {

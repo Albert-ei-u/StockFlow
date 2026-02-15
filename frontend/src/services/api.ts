@@ -34,7 +34,7 @@ export const saleAPI = {
 export const inventoryAPI = {
   getAll: () => api.get<Inventory[]>('/inventory'),
   getById: (id: string) => api.get<Inventory>(`/inventory/${id}`),
-  getLowStockAlerts: () => api.get<Inventory[]>('/inventory/low-stock'),
+  getLowStockAlerts: ()=> api.get<Inventory[]>('/inventory/low-stock'),
   getMovements: (id: string) => api.get(`/inventory/${id}/movements`),
   restock: (id: string, data: { quantity: number; notes?: string; supplier?: string }) =>
     api.post<Inventory>(`/inventory/${id}/restock`, data),

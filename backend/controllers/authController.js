@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
 import Business from '../models/Business.js';
 
@@ -20,8 +21,16 @@ export const register = async (req, res) => {
       return res.status(400).json({ message: 'User already exists' });
     }
 
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
     // Create user
-    const user = new User({ name, email, password });
+    const user = new User({ 
+      name, 
+      email, 
+      password: hashedPassword 
+    });
     await user.save();
 
     // Generate token
@@ -107,11 +116,15 @@ export const joinBusiness = async (req, res) => {
       await business.save();
     }
 
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
     // Create user with business code
     const user = new User({ 
       name, 
       email, 
-      password, 
+      password: hashedPassword,
       businessCode,
       role: 'staff' // First user to join business becomes staff
     });

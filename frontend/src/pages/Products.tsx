@@ -23,7 +23,7 @@ const Products: React.FC = () => {
       setLoading(false);
     }
   };
-
+//handle delete
   const handleDelete = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
       try {

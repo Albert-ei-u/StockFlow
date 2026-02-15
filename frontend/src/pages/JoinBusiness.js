@@ -223,7 +223,7 @@ const JoinBusiness = ({ onLogin }) => {
                   Joining business...
                 </div>
               ) : (
-                'Join Business'
+                'Join Business '
               )}
             </button>
           </form>

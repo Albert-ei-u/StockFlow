@@ -46,7 +46,7 @@ export const createProduct = async (req, res) => {
     }
 };
 
-// @desc   Update product
+// @desc  Update product
 //@route PUT /api/products/:id
 export const updateProduct = async (req, res) => {
     try {

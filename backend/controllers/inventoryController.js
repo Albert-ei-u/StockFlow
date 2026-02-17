@@ -84,7 +84,7 @@ export const getLowStockAlerts = async (req, res) => {
 };
 
 // @desc   Get inventory movements for a product
-// @route   GET /api/inventory/:id/movements
+// @route  GET /api/inventory/:id/movements
 export const getInventoryMovements = async (req, res) => {
     try {
         const inventory = await Inventory.findById(req.params.id)

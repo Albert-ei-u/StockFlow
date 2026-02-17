@@ -71,7 +71,7 @@ export const restockInventory = async (req, res) => {
 };
 
 // @desc  Get low stock alerts
-// @route   GET /api/inventory/low-stock
+// @route  GET /api/inventory/low-stock
 export const getLowStockAlerts = async (req, res) => {
     try {
         const lowStockItems = await Inventory.find({ lowStockAlert: true })

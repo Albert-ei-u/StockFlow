@@ -70,7 +70,7 @@ export const restockInventory = async (req, res) => {
     }
 };
 
-// @desc    Get low stock alerts
+// @desc   Get low stock alerts
 // @route   GET /api/inventory/low-stock
 export const getLowStockAlerts = async (req, res) => {
     try {

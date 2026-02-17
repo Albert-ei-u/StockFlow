@@ -29,7 +29,7 @@ export const getInventoryItem = async (req, res) => {
     }
 };
 
-// @desc    Update inventory (restock)
+// @desc   Update inventory (restock)
 // @route   POST /api/inventory/:id/restock
 export const restockInventory = async (req, res) => {
     try {

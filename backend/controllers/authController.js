@@ -5,7 +5,7 @@ import Business from '../models/Business.js';
 
 // Generate JWT Token
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET || 'sales flow isunderdevelopment', {
+  return jwt.sign({ id }, process.env.JWT_SECRET || 'sales flow is underdevelopment', {
     expiresIn: '30d'
   });
 };

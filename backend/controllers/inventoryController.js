@@ -2,7 +2,7 @@ import Inventory from '../models/Inventory.js';
 import Product from '../models/Product.js';
 
 // @desc  Get all inventory
-// @route  GET /api/inventory
+// @route GET /api/inventory
 export const getInventory = async (req, res) => {
     try {
         const inventory = await Inventory.find()

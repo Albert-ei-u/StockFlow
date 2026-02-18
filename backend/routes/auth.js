@@ -15,4 +15,5 @@ router.post('/join-business', joinBusiness);
 // Get profile route (protected)
 router.get('/profile', getProfile);
 
+
 export default router;

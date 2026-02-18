@@ -157,6 +157,7 @@ export const joinBusiness = async (req, res) => {
   }
 };
 
+
 // Get Current User Profile
 export const getProfile = async (req, res) => {
   try {

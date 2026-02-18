@@ -14,7 +14,7 @@ export const getInventory = async (req, res) => {
     }
 };
 
-// @desc   Get single inventory item
+// @desc  Get single inventory item
 // @route   GET /api/inventory/:id
 export const getInventoryItem = async (req, res) => {
     try {

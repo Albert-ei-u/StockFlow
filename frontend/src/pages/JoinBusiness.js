@@ -11,7 +11,6 @@ const JoinBusiness = ({ onLogin }) => {
     businessName: '',
     businessDescription: ''
   });
-  
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 

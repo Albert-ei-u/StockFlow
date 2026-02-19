@@ -42,7 +42,6 @@ const JoinBusiness = ({ onLogin }) => {
           businessDescription: formData.businessDescription
         })
       });
-
       const data = await response.json();
 
       if (response.ok) {

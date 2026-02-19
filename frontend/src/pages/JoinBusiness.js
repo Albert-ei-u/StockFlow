@@ -72,7 +72,7 @@ const JoinBusiness = ({ onLogin }) => {
           <h2 className="text-3xl font-bold text-gray-900">Join Business</h2>
           <p className="mt-2 text-gray-600">Connect with your existing business team</p>
         </div>
-        
+
         {/* Join Business Form */}
         <div className="bg-white rounded-xl shadow-lg p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -85,7 +85,7 @@ const JoinBusiness = ({ onLogin }) => {
             {/* Personal Information */}
             <div className="space-y-4">
               <h3 className="text-lg font-medium text-gray-900">Personal Information</h3>
-              
+
               {/* Name Field */}
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">

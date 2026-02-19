@@ -14,6 +14,7 @@ import {
   BarChart3,
   Activity
 } from 'lucide-react';
+
 import { LineChart, Line, BarChart, Bar, PieChart as RePieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const Dashboard = ({ user, onLogout }) => {

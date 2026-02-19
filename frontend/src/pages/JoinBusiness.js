@@ -42,7 +42,7 @@ const JoinBusiness = ({ onLogin }) => {
           businessDescription: formData.businessDescription
         })
       });
-      
+
       const data = await response.json();
 
       if (response.ok) {
@@ -72,7 +72,6 @@ const JoinBusiness = ({ onLogin }) => {
           <h2 className="text-3xl font-bold text-gray-900">Join Business</h2>
           <p className="mt-2 text-gray-600">Connect with your existing business team</p>
         </div>
-
         {/* Join Business Form */}
         <div className="bg-white rounded-xl shadow-lg p-8">
           <form onSubmit={handleSubmit} className="space-y-6">

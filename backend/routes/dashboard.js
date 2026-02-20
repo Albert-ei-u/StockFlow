@@ -7,7 +7,7 @@ const router = express.Router();
 router.get('/stats', getStats);
 
 // Get daily sales for chart
-router.get('/daily-sales/:days?', getDailySales);
+router.get('/daily-sales/:days', getDailySales);
 
 // Get top products
 router.get('/top-products', getTopProducts);

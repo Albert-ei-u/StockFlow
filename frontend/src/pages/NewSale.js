@@ -314,16 +314,12 @@ const NewSale = ({ user }) => {
               <div className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Subtotal</span>
-                  <span className="font-medium">${calculateTotal().toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Tax (8%)</span>
-                  <span className="font-medium">${calculateTax().toFixed(2)}</span>
+                  <span className="font-medium">FRw {calculateTotal().toFixed(2)}</span>
                 </div>
                 <div className="border-t pt-3">
                   <div className="flex justify-between">
                     <span className="text-lg font-semibold">Total</span>
-                    <span className="text-lg font-bold text-blue-600">${calculateGrandTotal().toFixed(2)}</span>
+                    <span className="text-lg font-bold text-blue-600">FRw {calculateGrandTotal().toFixed(2)}</span>
                   </div>
                 </div>
               </div>

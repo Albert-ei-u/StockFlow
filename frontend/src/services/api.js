@@ -22,6 +22,7 @@ api.interceptors.request.use((config) => {
 export const authAPI = {
   login: (credentials) => api.post('/auth/login', credentials),
   register: (userData) => api.post('/auth/register', userData),
+  registerBusiness: (businessData) => api.post('/auth/register-business', businessData),
   joinBusiness: (businessData) => api.post('/auth/join-business', businessData),
   getProfile: () => api.get('/auth/profile'),
 };

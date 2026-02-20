@@ -173,7 +173,7 @@ const NewSale = ({ user }) => {
                     value={customerInfo.name}
                     onChange={(e) => setCustomerInfo({...customerInfo, name: e.target.value})}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                    placeholder="John Doe"
+                    placeholder="Customer"
                   />
                 </div>
                 <div>
@@ -185,7 +185,7 @@ const NewSale = ({ user }) => {
                     value={customerInfo.email}
                     onChange={(e) => setCustomerInfo({...customerInfo, email: e.target.value})}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                    placeholder="john@example.com"
+                    placeholder="email@example.com"
                   />
                 </div>
                 <div>
@@ -197,7 +197,7 @@ const NewSale = ({ user }) => {
                     value={customerInfo.phone}
                     onChange={(e) => setCustomerInfo({...customerInfo, phone: e.target.value})}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                    placeholder="+1234567890"
+                    placeholder="+250•••••••••"
                   />
                 </div>
               </div>

@@ -16,6 +16,8 @@ const Products = ({ user, onLogout }) => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [productToDelete, setProductToDelete] = useState(null);
   const [editingProduct, setEditingProduct] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
@@ -80,16 +82,26 @@ const Products = ({ user, onLogout }) => {
     setShowAddModal(true);
   };
 
-  const handleDelete = async (productId) => {
-    if (confirm('Are you sure you want to delete this product?')) {
-      try {
-        await productAPI.delete(productId);
-        fetchProducts();
-      } catch (error) {
-        console.error('Error deleting product:', error);
-        alert('Error deleting product');
-      }
+  const handleDelete = (productId) => {
+    setProductToDelete(productId);
+    setShowConfirmModal(true);
+  };
+
+  const confirmDelete = async () => {
+    try {
+      await productAPI.delete(productToDelete);
+      fetchProducts();
+      setShowConfirmModal(false);
+      setProductToDelete(null);
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      alert('Error deleting product');
     }
+  };
+
+  const cancelDelete = () => {
+    setShowConfirmModal(false);
+    setProductToDelete(null);
   };
 
   const filteredProducts = products.filter(product =>
@@ -347,6 +359,35 @@ const Products = ({ user, onLogout }) => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showConfirmModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-6 w-full max-w-md">
+            <div className="flex items-center mb-4">
+              <AlertTriangle className="h-6 w-6 text-red-500 mr-3" />
+              <h3 className="text-lg font-semibold text-gray-900">Confirm Delete</h3>
+            </div>
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to delete this product? This action cannot be undone.
+            </p>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={cancelDelete}
+                className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+              >
+                Delete Product
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -23,7 +23,6 @@ const Products = ({ user, onLogout }) => {
     name: '',
     sku: '',
     cost: '',
-    stock: '',
     stockQuantity: '',
     minStockLevel: '',
     supplier: ''
@@ -60,7 +59,6 @@ const Products = ({ user, onLogout }) => {
         name: '',
         sku: '',
         cost: '',
-        stock: '',
         stockQuantity: '',
         minStockLevel: '',
         supplier: ''
@@ -77,7 +75,6 @@ const Products = ({ user, onLogout }) => {
       name: product.name,
       sku: product.sku,
       cost: product.cost,
-      stock: product.stock,
       stockQuantity: product.stockQuantity,
       minStockLevel: product.minStockLevel,
       supplier: product.supplier
@@ -200,9 +197,11 @@ const Products = ({ user, onLogout }) => {
                         <Package className="h-5 w-5 text-gray-400 mr-3" />
                         <div>
                           <div className="text-sm font-medium text-gray-900">{product.name}</div>
-                          <div className="text-sm text-gray-500">SKU: {product.sku}</div>
                         </div>
                       </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {product.sku}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
@@ -314,20 +313,7 @@ const Products = ({ user, onLogout }) => {
                 {/* Stock Information */}
                 <div>
                   <h4 className="text-sm font-medium text-gray-900 mb-3 border-b pb-1">Stock Information</h4>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Stock
-                      </label>
-                      <input
-                        type="number"
-                        required
-                        value={formData.stock}
-                        onChange={(e) => setFormData({...formData, stock: e.target.value})}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                        placeholder="0"
-                      />
-                    </div>
+                  <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Stock Quantity
@@ -341,19 +327,19 @@ const Products = ({ user, onLogout }) => {
                         placeholder="0"
                       />
                     </div>
-                  </div>
-                  <div className="mt-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Minimum Stock Level
-                    </label>
-                    <input
-                      type="number"
-                      required
-                      value={formData.minStockLevel}
-                      onChange={(e) => setFormData({...formData, minStockLevel: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                      placeholder="0"
-                    />
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Minimum Stock Level
+                      </label>
+                      <input
+                        type="number"
+                        required
+                        value={formData.minStockLevel}
+                        onChange={(e) => setFormData({...formData, minStockLevel: e.target.value})}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                        placeholder="0"
+                      />
+                    </div>
                   </div>
                 </div>
 
@@ -384,7 +370,6 @@ const Products = ({ user, onLogout }) => {
                       name: '',
                       sku: '',
                       cost: '',
-                      stock: '',
                       stockQuantity: '',
                       minStockLevel: '',
                       supplier: ''

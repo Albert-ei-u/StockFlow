@@ -85,7 +85,7 @@ export const getDailySales = async (req, res) => {
         $group: {
           _id: {
             $dateToString: {
-              format: "%a",
+              format: "%Y-%m-%d",
               date: "$createdAt"
             }
           },

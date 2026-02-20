@@ -158,7 +158,7 @@ const NewSale = ({ user }) => {
         salesperson: user?.name || 'Unknown'
       };
 
-      const response = await saleAPI.create(saleData);
+      await saleAPI.create(saleData);
       
       let successMessage = '';
       if (isPartialPayment) {

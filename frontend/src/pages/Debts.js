@@ -1,19 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   CreditCard, 
   User, 
   Phone, 
   Mail, 
-  Calendar,
   DollarSign,
   CheckCircle,
   Clock,
-  AlertCircle,
   Search,
   Filter,
-  ArrowLeft,
-  TrendingUp,
-  TrendingDown
+  ArrowLeft
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { saleAPI } from '../services/api';
@@ -40,7 +36,7 @@ const Debts = ({ user }) => {
 
   useEffect(() => {
     filterDebts();
-  }, [debts, searchTerm, statusFilter]);
+  }, [filterDebts]);
 
   const fetchDebts = async () => {
     try {
@@ -98,7 +94,7 @@ const Debts = ({ user }) => {
     }
   };
 
-  const filterDebts = () => {
+  const filterDebts = useCallback(() => {
     let filtered = debts;
 
     // Apply search filter
@@ -123,7 +119,7 @@ const Debts = ({ user }) => {
     }
 
     setFilteredDebts(filtered);
-  };
+  }, [debts, searchTerm, statusFilter]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);

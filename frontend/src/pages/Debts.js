@@ -34,6 +34,33 @@ const Debts = ({ user }) => {
     fetchDebts();
   }, []);
 
+  const filterDebts = useCallback(() => {
+    let filtered = debts;
+
+    // Apply search filter
+    if (searchTerm) {
+      filtered = filtered.filter(debt => 
+        debt.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        debt.customerEmail?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        debt.customerPhone?.includes(searchTerm)
+      );
+    }
+
+    // Apply status filter
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(debt => {
+        if (statusFilter === 'pending') {
+          return debt.pendingAmount > 0;
+        } else if (statusFilter === 'paid') {
+          return debt.pendingAmount === 0;
+        }
+        return true;
+      });
+    }
+
+    setFilteredDebts(filtered);
+  }, [debts, searchTerm, statusFilter]);
+
   useEffect(() => {
     filterDebts();
   }, [filterDebts]);
@@ -93,33 +120,6 @@ const Debts = ({ user }) => {
       setLoading(false);
     }
   };
-
-  const filterDebts = useCallback(() => {
-    let filtered = debts;
-
-    // Apply search filter
-    if (searchTerm) {
-      filtered = filtered.filter(debt => 
-        debt.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        debt.customerEmail?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        debt.customerPhone?.includes(searchTerm)
-      );
-    }
-
-    // Apply status filter
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter(debt => {
-        if (statusFilter === 'pending') {
-          return debt.pendingAmount > 0;
-        } else if (statusFilter === 'paid') {
-          return debt.pendingAmount === 0;
-        }
-        return true;
-      });
-    }
-
-    setFilteredDebts(filtered);
-  }, [debts, searchTerm, statusFilter]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);

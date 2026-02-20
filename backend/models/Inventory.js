@@ -48,15 +48,4 @@ const inventorySchema = new mongoose.Schema({
     timestamps: true
 });
 
-// Update low stock alert
-inventorySchema.pre('save', function(next) {
-    const Product = mongoose.model('Product');
-    Product.findById(this.product).then(product => {
-        if (product) {
-            this.lowStockAlert = this.currentStock <= product.minStockLevel;
-        }
-        next();
-    }).catch(err => next(err));
-});
-
 export default mongoose.model('Inventory', inventorySchema);

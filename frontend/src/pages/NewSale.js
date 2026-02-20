@@ -52,15 +52,13 @@ const NewSale = ({ user }) => {
   );
 
   const addProduct = (product) => {
-    const existingProduct = selectedProducts.find(p => p.id === product.id);
-    
+    const existingProduct = selectedProducts.find(p => (p._id || p.id) === (product._id || product.id));
     if (existingProduct) {
       if (existingProduct.quantity < product.stock) {
         setSelectedProducts(selectedProducts.map(p =>
-          p.id === product.id 
+          (p._id || p.id) === (product._id || product.id) 
             ? { ...p, quantity: p.quantity + 1, subtotal: (p.quantity + 1) * p.price }
             : p
-            
         ));
       }
     } else {
@@ -76,7 +74,7 @@ const NewSale = ({ user }) => {
 
   const updateQuantity = (productId, change) => {
     setSelectedProducts(selectedProducts.map(product => {
-      if (product.id === productId) {
+      if ((product._id || product.id) === productId) {
         const newQuantity = product.quantity + change;
         if (newQuantity > 0 && newQuantity <= product.stock) {
           return {
@@ -91,7 +89,7 @@ const NewSale = ({ user }) => {
   };
 
   const removeProduct = (productId) => {
-    setSelectedProducts(selectedProducts.filter(p => p.id !== productId));
+    setSelectedProducts(selectedProducts.filter(p => (p._id || p.id) !== productId));
   };
 
   const calculateTotal = () => {
@@ -142,7 +140,7 @@ const NewSale = ({ user }) => {
     try {
       const saleData = {
         items: selectedProducts.map(p => ({
-          productId: p.id,
+          product: p._id || p.id,
           quantity: p.quantity,
           unitPrice: p.price,
           subtotal: p.subtotal
@@ -315,34 +313,31 @@ const NewSale = ({ user }) => {
                   <h3 className="text-md font-medium text-gray-900 mb-3">Selected Products</h3>
                   <div className="space-y-3">
                     {selectedProducts.map(product => (
-                      <div key={product.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                      <div key={product._id || product.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                         <div className="flex-1">
                           <p className="font-medium text-gray-900">{product.name}</p>
                           <p className="text-sm text-gray-500">${product.price.toFixed(2)} each</p>
                         </div>
                         <div className="flex items-center space-x-2">
                           <button
-                            onClick={() => updateQuantity(product.id, -1)}
+                            onClick={() => updateQuantity(product._id || product.id, -1)}
                             className="p-1 rounded hover:bg-gray-200 transition"
                           >
                             <Minus className="h-4 w-4" />
                           </button>
                           <span className="w-8 text-center font-medium">{product.quantity}</span>
                           <button
-                            onClick={() => updateQuantity(product.id, 1)}
+                            onClick={() => updateQuantity(product._id || product.id, 1)}
                             className="p-1 rounded hover:bg-gray-200 transition"
                           >
                             <Plus className="h-4 w-4" />
                           </button>
                           <button
-                            onClick={() => removeProduct(product.id)}
-                            className="p-1 rounded hover:bg-red-100 text-red-600 transition ml-4"
+                            onClick={() => removeProduct(product._id || product.id)}
+                            className="p-1 rounded hover:bg-red-100 text-red-600 transition"
                           >
                             <Trash2 className="h-4 w-4" />
                           </button>
-                        </div>
-                        <div className="ml-4 text-right">
-                          <p className="font-medium text-gray-900">${product.subtotal.toFixed(2)}</p>
                         </div>
                       </div>
                     ))}

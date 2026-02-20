@@ -6,6 +6,7 @@ import JoinBusiness from './pages/JoinBusiness';
 import Dashboard from './pages/Dashboard';
 import NewSale from './pages/NewSale';
 import Products from './pages/Products';
+import SalesHistory from './pages/SalesHistory';
 import './index.css';
 
 function App() {
@@ -63,6 +64,10 @@ function App() {
           <Route 
             path="/products" 
             element={isAuthenticated ? <Products user={user} /> : <Navigate to="/login" />} 
+          />
+          <Route 
+            path="/sales-history" 
+            element={isAuthenticated ? <SalesHistory user={user} /> : <Navigate to="/login" />} 
           />
           
           <Route 

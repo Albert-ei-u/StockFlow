@@ -171,10 +171,13 @@ const Dashboard = ({ user, onLogout }) => {
                 <Package className="h-5 w-5 mr-3" />
                 Products
               </Link>
-              <button className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition w-full text-left">
+              <Link
+                to="/sales-history"
+                className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition"
+              >
                 <ShoppingCart className="h-5 w-5 mr-3" />
                 Sales
-              </button>
+              </Link>
               <button className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition w-full text-left">
                 <Users className="h-5 w-5 mr-3" />
                 Customers

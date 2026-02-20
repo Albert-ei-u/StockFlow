@@ -166,25 +166,61 @@ const Dashboard = ({ user, onLogout }) => {
               </Link>
               <Link
                 to="/products"
-                className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition"
+                className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition ${
+                  user?.role === 'staff' 
+                    ? 'text-gray-400 cursor-not-allowed' 
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
+                onClick={(e) => user?.role === 'staff' && e.preventDefault()}
               >
                 <Package className="h-5 w-5 mr-3" />
                 Products
+                {user?.role === 'staff' && (
+                  <span className="ml-2 text-xs bg-gray-200 px-2 py-1 rounded">Owner Only</span>
+                )}
               </Link>
               <Link
                 to="/sales-history"
-                className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition"
+                className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition ${
+                  user?.role === 'staff' 
+                    ? 'text-gray-400 cursor-not-allowed' 
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
+                onClick={(e) => user?.role === 'staff' && e.preventDefault()}
               >
                 <ShoppingCart className="h-5 w-5 mr-3" />
                 Sales
+                {user?.role === 'staff' && (
+                  <span className="ml-2 text-xs bg-gray-200 px-2 py-1 rounded">Owner Only</span>
+                )}
               </Link>
-              <button className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition w-full text-left">
+              <button 
+                className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition w-full text-left ${
+                  user?.role === 'staff' 
+                    ? 'text-gray-400 cursor-not-allowed' 
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
+                disabled={user?.role === 'staff'}
+              >
                 <Users className="h-5 w-5 mr-3" />
                 Customers
+                {user?.role === 'staff' && (
+                  <span className="ml-2 text-xs bg-gray-200 px-2 py-1 rounded">Owner Only</span>
+                )}
               </button>
-              <button className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition w-full text-left">
+              <button 
+                className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition w-full text-left ${
+                  user?.role === 'staff' 
+                    ? 'text-gray-400 cursor-not-allowed' 
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
+                disabled={user?.role === 'staff'}
+              >
                 <Activity className="h-5 w-5 mr-3" />
                 Reports
+                {user?.role === 'staff' && (
+                  <span className="ml-2 text-xs bg-gray-200 px-2 py-1 rounded">Owner Only</span>
+                )}
               </button>
             </div>
           </nav>

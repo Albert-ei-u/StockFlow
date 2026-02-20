@@ -19,14 +19,15 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Password is required'],
     minlength: [6, 'Password must be at least 6 characters long']
   },
-  businessCode: {
-    type: String,
-    default: null
-  },
   role: {
     type: String,
-    enum: ['admin', 'manager', 'staff'],
+    enum: ['owner', 'admin', 'manager', 'staff'],
     default: 'staff'
+  },
+  businessId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Business',
+    default: null
   },
   createdAt: {
     type: Date,

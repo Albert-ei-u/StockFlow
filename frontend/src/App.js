@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './pages/Login';
 import Register from './pages/Register';
 import JoinBusiness from './pages/JoinBusiness';
+import BusinessRegister from './pages/BusinessRegister';
 import Dashboard from './pages/Dashboard';
 import NewSale from './pages/NewSale';
 import Products from './pages/Products';
@@ -52,6 +53,10 @@ function App() {
           <Route 
             path="/join-business" 
             element={!isAuthenticated ? <JoinBusiness onLogin={handleLogin} /> : <Navigate to="/dashboard" />} 
+          />
+          <Route 
+            path="/register-business" 
+            element={!isAuthenticated ? <BusinessRegister onLogin={handleLogin} /> : <Navigate to="/dashboard" />} 
           />
           <Route 
             path="/dashboard" 

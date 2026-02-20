@@ -10,7 +10,80 @@ const generateToken = (id) => {
   });
 };
 
-// Register User
+// Register Business Owner
+export const registerBusiness = async (req, res) => {
+  try {
+    const { name, email, password, businessName, businessDescription } = req.body;
+
+    // Check if user exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: 'User already exists' });
+    }
+
+    // Generate unique business code
+    const businessCode = generateBusinessCode();
+
+    // Create business
+    const business = new Business({
+      name: businessName,
+      description: businessDescription,
+      businessCode
+    });
+    await business.save();
+
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Create business owner
+    const user = new User({ 
+      name, 
+      email, 
+      password: hashedPassword,
+      role: 'owner',
+      businessId: business._id
+    });
+    await user.save();
+
+    // Generate token
+    const token = generateToken(user._id);
+
+    res.status(201).json({
+      message: 'Business registered successfully',
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        businessId: user.businessId,
+        createdAt: user.createdAt
+      },
+      business: {
+        _id: business._id,
+        name: business.name,
+        description: business.description,
+        businessCode: business.businessCode
+      },
+      token
+    });
+  } catch (error) {
+    console.error('Business registration error:', error);
+    res.status(500).json({ message: 'Server error during business registration' });
+  }
+};
+
+// Generate Business Code
+const generateBusinessCode = () => {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let code = '';
+  for (let i = 0; i < 8; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return code;
+};
+
+// Register User (for backward compatibility)
 export const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -43,7 +116,7 @@ export const register = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
-        businessCode: user.businessCode,
+        businessId: user.businessId,
         createdAt: user.createdAt
       },
       token
@@ -60,7 +133,7 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
 
     // Check if user exists
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).populate('businessId');
     if (!user) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
@@ -81,9 +154,10 @@ export const login = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
-        businessCode: user.businessCode,
+        businessId: user.businessId,
         createdAt: user.createdAt
       },
+      business: user.businessId,
       token
     });
   } catch (error) {
@@ -92,10 +166,10 @@ export const login = async (req, res) => {
   }
 };
 
-// Join Business
+// Join Business (for employees)
 export const joinBusiness = async (req, res) => {
   try {
-    const { name, email, password, businessCode, businessName, businessDescription } = req.body;
+    const { name, email, password, businessCode } = req.body;
 
     // Check if user exists
     const existingUser = await User.findOne({ email });
@@ -103,30 +177,23 @@ export const joinBusiness = async (req, res) => {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    // Check if business exists
-    let business = await Business.findOne({ businessCode });
-    
+    // Find business by code
+    const business = await Business.findOne({ businessCode });
     if (!business) {
-      // Create new business if it doesn't exist
-      business = new Business({
-        name: businessName,
-        description: businessDescription,
-        businessCode
-      });
-      await business.save();
+      return res.status(400).json({ message: 'Invalid business code' });
     }
 
     // Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Create user with business code
+    // Create employee user
     const user = new User({ 
       name, 
       email, 
       password: hashedPassword,
-      businessCode,
-      role: 'staff' // First user to join business becomes staff
+      role: 'staff', // All employees start as staff
+      businessId: business._id
     });
     await user.save();
 
@@ -140,7 +207,7 @@ export const joinBusiness = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
-        businessCode: user.businessCode,
+        businessId: user.businessId,
         createdAt: user.createdAt
       },
       business: {
@@ -160,7 +227,7 @@ export const joinBusiness = async (req, res) => {
 // Get Current User Profile
 export const getProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('-password');
+    const user = await User.findById(req.user.id).populate('businessId').select('-password');
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -171,9 +238,10 @@ export const getProfile = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
-        businessCode: user.businessCode,
+        businessId: user.businessId,
         createdAt: user.createdAt
-      }
+      },
+      business: user.businessId
     });
   } catch (error) {
     console.error('Get profile error:', error);

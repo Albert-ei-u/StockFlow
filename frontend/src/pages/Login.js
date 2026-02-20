@@ -165,12 +165,24 @@ const Login = ({ onLogin }) => {
             </button>
           </form>
 
-          {/* Sign Up Link */}
-          <div className="mt-6 text-center">
+          {/* Register Links */}
+          <div className="text-center">
             <p className="text-sm text-gray-600">
               Don't have an account?{' '}
               <Link to="/register" className="font-medium text-blue-600 hover:text-blue-500">
                 Sign up
+              </Link>
+            </p>
+            <p className="text-sm text-gray-600 mt-2">
+              Business owner?{' '}
+              <Link to="/register-business" className="font-medium text-green-600 hover:text-green-500">
+                Register Business
+              </Link>
+            </p>
+            <p className="text-sm text-gray-600 mt-2">
+              Employee?{' '}
+              <Link to="/join-business" className="font-medium text-purple-600 hover:text-purple-500">
+                Join Business
               </Link>
             </p>
           </div>

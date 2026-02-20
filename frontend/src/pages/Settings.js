@@ -162,8 +162,13 @@ const SettingsPage = ({ user, onLogout }) => {
                               <span className="text-white font-medium">{employee.name.charAt(0)}</span>
                             </div>
                             <div>
-                              <p className="font-medium">{employee.name}</p>
-                              <p className="text-sm text-gray-500">{employee.role}</p>
+                              <p className="font-medium">{employee}</p>
+                              <p className="text-sm text-gray-500">Employee</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center">
+                            <div className="w-3 h-3 bg-green-500 rounded-full flex items-center justify-center">
+                              <span className="text-white font-medium">A</span>
                             </div>
                           </div>
                           <button className="text-red-600 hover:text-red-800">
@@ -319,4 +324,4 @@ const SettingsPage = ({ user, onLogout }) => {
   );
 };
 
-export default Settings;
+export default SettingsPage;

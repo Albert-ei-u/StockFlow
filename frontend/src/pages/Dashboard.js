@@ -15,10 +15,12 @@ import {
   Building,
   Copy,
   Check,
-  CreditCard
+  CreditCard,
+  Settings
 } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, PieChart as RePieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { dashboardAPI } from '../services/api';
+import SettingsPage from './Settings.js';
 
 const Dashboard = ({ user, onLogout }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -130,18 +132,6 @@ const Dashboard = ({ user, onLogout }) => {
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <Link
-                to="/settings"
-                className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition ${
-                  user?.role === 'staff' 
-                    ? 'text-gray-400 cursor-not-allowed' 
-                    : 'text-gray-700 hover:bg-gray-100'
-                }`}
-                onClick={(e) => user?.role === 'staff' && e.preventDefault()}
-              >
-                <Settings className="h-5 w-5 mr-3" />
-                Settings
-              </Link>
               <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
                 className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 lg:hidden"
@@ -166,11 +156,11 @@ const Dashboard = ({ user, onLogout }) => {
 
       <div className="flex">
         {/* Sidebar */}
-        <aside className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}>
+        <aside className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 lg:flex lg:flex-col`}>
           <div className="flex items-center justify-center h-16 bg-blue-600 text-white">
             <h2 className="text-xl font-bold">SalesFlow</h2>
           </div>
-          <nav className="mt-8">
+          <nav className="mt-8 flex-1">
             <div className="px-4 space-y-2">
               <Link
                 to="/dashboard"
@@ -195,11 +185,8 @@ const Dashboard = ({ user, onLogout }) => {
                 }`}
                 onClick={(e) => user?.role === 'staff' && e.preventDefault()}
               >
-                <Package className="h-5 w-5 mr-3" />
+                <Building className="h-5 w-5 mr-3" />
                 Products
-                {user?.role === 'staff' && (
-                  <span className="ml-2 text-xs bg-gray-200 px-2 py-1 rounded">Owner Only</span>
-                )}
               </Link>
               <Link
                 to="/sales-history"
@@ -212,9 +199,6 @@ const Dashboard = ({ user, onLogout }) => {
               >
                 <ShoppingCart className="h-5 w-5 mr-3" />
                 Sales
-                {user?.role === 'staff' && (
-                  <span className="ml-2 text-xs bg-gray-200 px-2 py-1 rounded">Owner Only</span>
-                )}
               </Link>
               <Link
                 to="/debts"
@@ -227,37 +211,42 @@ const Dashboard = ({ user, onLogout }) => {
               >
                 <CreditCard className="h-5 w-5 mr-3" />
                 Debts
-                {user?.role === 'staff' && (
-                  <span className="ml-2 text-xs bg-gray-200 px-2 py-1 rounded">Owner Only</span>
-                )}
               </Link>
-              <button 
-                className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition w-full text-left ${
-                  user?.role === 'staff' 
-                    ? 'text-gray-400 cursor-not-allowed' 
-                    : 'text-gray-700 hover:bg-gray-100'
-                }`}
-                disabled={user?.role === 'staff'}
-              >
-                <Settings className="h-5 w-5 mr-3" />
-                Settings
-              </button>
-              <button 
-                className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition w-full text-left ${
-                  user?.role === 'staff' 
-                    ? 'text-gray-400 cursor-not-allowed' 
-                    : 'text-gray-700 hover:bg-gray-100'
-                }`}
-                disabled={user?.role === 'staff'}
-              >
-                <Activity className="h-5 w-5 mr-3" />
-                Reports
-                {user?.role === 'owner' && (
-                  <span className="ml-2 text-xs bg-gray-200 px-2 py-1 rounded">Owner Only</span>
-                )}
-              </button>
             </div>
           </nav>
+          <div className="px-4 pb-4 space-y-2 border-t border-gray-200 pt-4">
+            <button 
+              className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition w-full text-left ${
+                user?.role === 'staff' 
+                  ? 'text-gray-400 cursor-not-allowed' 
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}
+              disabled={user?.role === 'staff'}
+            >
+              <Activity className="h-5 w-5 mr-3" />
+              Reports
+              {user?.role === 'owner' && (
+                <span className="ml-2 text-xs bg-gray-200 px-2 py-1 rounded">Owner Only</span>
+              )}
+            </button>
+            <button 
+              onClick={() => {
+                if (user?.role === 'staff') {
+                  alert('Only business owners can access Settings');
+                  return;
+                }
+                window.location.href = '/settings';
+              }}
+              className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition w-full text-left ${
+                user?.role === 'staff' 
+                  ? 'text-gray-400 cursor-not-allowed' 
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}
+            >
+              <Settings className="h-5 w-5 mr-3" />
+              Settings
+            </button>
+          </div>
         </aside>
 
         {/* Main Content */}

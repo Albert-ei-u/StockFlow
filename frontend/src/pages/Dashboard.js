@@ -85,7 +85,7 @@ const Dashboard = ({ user, onLogout }) => {
         <div>
           <p className="text-sm font-medium text-gray-600">{title}</p>
           <p className="text-2xl font-bold text-gray-900 mt-2">
-            {typeof value === 'number' && title.includes('$') ? `$${value.toLocaleString()}` : value.toLocaleString()}
+            {typeof value === 'number' && title.includes('Sales') ? `FRw ${value.toLocaleString()}` : value.toLocaleString()}
           </p>
           {change && (
             <div className={`flex items-center mt-2 text-sm ${changeType === 'positive' ? 'text-green-600' : 'text-red-600'}`}>
@@ -191,7 +191,7 @@ const Dashboard = ({ user, onLogout }) => {
             <StatCard
               title="Total Sales"
               value={stats.totalSales}
-              icon={frwdash}
+              icon={TrendingUp}
               change={stats.salesGrowth}
               changeType="positive"
             />
@@ -301,7 +301,7 @@ const Dashboard = ({ user, onLogout }) => {
                         {sale.customer}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        ${sale.amount.toFixed(2)}
+                        FRw {sale.amount.toFixed(2)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${

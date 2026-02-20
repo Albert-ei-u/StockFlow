@@ -7,7 +7,7 @@ import Inventory from '../models/Inventory.js';
 export const getSales = async (req, res) => {
     try {
         const sales = await Sale.find()
-            .populate('items.product', 'name sku price')
+            .populate('items.product', 'name sku cost')
             .sort({ createdAt: -1 });
         res.json(sales);
     } catch (error) {
@@ -20,7 +20,7 @@ export const getSales = async (req, res) => {
 export const getSale = async (req, res) => {
     try {
         const sale = await Sale.findById(req.params.id)
-            .populate('items.product', 'name sku price');
+            .populate('items.product', 'name sku cost');
         if (!sale) {
             return res.status(404).json({ message: 'Sale not found' });
         }
@@ -34,7 +34,17 @@ export const getSale = async (req, res) => {
 // @route   POST /api/sales
 export const createSale = async (req, res) => {
     try {
+        console.log('=== SALE DEBUG ===');
+        console.log('Request body:', JSON.stringify(req.body, null, 2));
+        
         const { items, paymentMethod, customerName, customerEmail, customerPhone, salesperson, notes, paidAmount, remainingDebt } = req.body;
+        
+        console.log('Extracted data:', {
+            itemsCount: items?.length || 0,
+            paymentMethod,
+            customerName,
+            totalAmount: req.body.totalAmount
+        });
 
         // Validate stock availability
         for (const item of items) {
@@ -48,8 +58,8 @@ export const createSale = async (req, res) => {
                 });
             }
             // Set current price
-            item.unitPrice = product.price;
-            item.subtotal = product.price * item.quantity;
+            item.unitPrice = item.unitPrice;
+            item.subtotal = item.unitPrice * item.quantity;
         }
 
         // Calculate total
@@ -70,7 +80,10 @@ export const createSale = async (req, res) => {
             customerEmail,
             customerPhone,
             salesperson,
-            notes
+            notes,
+            saleNumber: req.body.saleNumber,
+            saleDate: req.body.saleDate,
+            status: req.body.status
         });
 
         const savedSale = await sale.save();
@@ -99,7 +112,7 @@ export const createSale = async (req, res) => {
         }
 
         const populatedSale = await Sale.findById(savedSale._id)
-            .populate('items.product', 'name sku price');
+            .populate('items.product', 'name sku cost');
 
         res.status(201).json(populatedSale);
     } catch (error) {
@@ -136,7 +149,7 @@ export const getSalesByDateRange = async (req, res) => {
                 $gte: new Date(startDate),
                 $lte: new Date(endDate)
             }
-        }).populate('items.product', 'name sku price');
+        }).populate('items.product', 'name sku cost');
         res.json(sales);
     } catch (error) {
         res.status(500).json({ message: error.message });

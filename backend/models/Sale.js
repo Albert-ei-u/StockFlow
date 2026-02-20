@@ -82,12 +82,12 @@ const saleSchema = new mongoose.Schema({
 });
 
 // Generate sale number before saving
-saleSchema.pre('save', async function(next) {
-    if (this.isNew) {
-        const count = await this.constructor.countDocuments();
-        this.saleNumber = `SALE-${String(count + 1).padStart(6, '0')}`;
-    }
-    next();
-});
+// saleSchema.pre('save', async function(next) {
+//     if (this.isNew) {
+//         const count = await this.constructor.countDocuments();
+//         this.saleNumber = `SALE-${String(count + 1).padStart(6, '0')}`;
+//     }
+//     next();
+// });
 
 export default mongoose.model('Sale', saleSchema);

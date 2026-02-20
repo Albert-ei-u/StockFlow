@@ -54,10 +54,10 @@ const NewSale = ({ user }) => {
   const addProduct = (product) => {
     const existingProduct = selectedProducts.find(p => (p._id || p.id) === (product._id || product.id));
     if (existingProduct) {
-      if (existingProduct.quantity < product.stock) {
+      if (existingProduct.quantity < product.stockQuantity) {
         setSelectedProducts(selectedProducts.map(p =>
           (p._id || p.id) === (product._id || product.id) 
-            ? { ...p, quantity: p.quantity + 1, subtotal: (p.quantity + 1) * (p.sellingPrice || p.cost * 1.5) }
+            ? { ...p, quantity: p.quantity + 1 }
             : p
         ));
       }
@@ -65,8 +65,7 @@ const NewSale = ({ user }) => {
       setSelectedProducts([...selectedProducts, {
         ...product,
         quantity: 1,
-        sellingPrice: product.cost * 1.5, // Default selling price (50% markup)
-        subtotal: product.cost * 1.5
+        sellingPrice: 0 // Default selling price to zero
       }]);
     }
     setShowProductSearch(false);
@@ -77,11 +76,10 @@ const NewSale = ({ user }) => {
     setSelectedProducts(selectedProducts.map(product => {
       if ((product._id || product.id) === productId) {
         const newQuantity = product.quantity + change;
-        if (newQuantity > 0 && newQuantity <= product.stock) {
+        if (newQuantity > 0 && newQuantity <= product.stockQuantity) {
           return {
             ...product,
-            quantity: newQuantity,
-            subtotal: newQuantity * (product.sellingPrice || product.cost * 1.5)
+            quantity: newQuantity
           };
         }
       }
@@ -94,7 +92,12 @@ const NewSale = ({ user }) => {
   };
 
   const calculateTotal = () => {
-    return selectedProducts.reduce((total, product) => total + product.subtotal, 0);
+    return selectedProducts.reduce((total, product) => {
+      const sellingPrice = product.sellingPrice || 0;
+      const quantity = product.quantity || 0;
+      const itemTotal = isNaN(sellingPrice * quantity) ? 0 : sellingPrice * quantity;
+      return total + itemTotal;
+    }, 0);
   };
 
   const calculateGrandTotal = () => {
@@ -139,8 +142,31 @@ const NewSale = ({ user }) => {
       remainingDebtAmount = totalAmount;
     }
 
+    // Validate customer info for all payment methods
+    if (paymentMethod !== 'Cash' && !customerInfo.name.trim()) {
+      alert('Customer name is required');
+      return;
+    }
+    
+    if (paymentMethod !== 'Cash' && !customerInfo.email.trim()) {
+      alert('Customer email is required');
+      return;
+    }
+    
+    if (paymentMethod !== 'Cash' && !customerInfo.phone.trim()) {
+      alert('Customer phone is required');
+      return;
+    }
+
     if ((finalIsDebt || isPartialPayment) && !customerInfo.name.trim()) {
       alert('Customer name is required for debt/partial payments');
+      return;
+    }
+
+    // Validate selling prices
+    const hasInvalidPrices = selectedProducts.some(p => !p.sellingPrice || p.sellingPrice <= 0);
+    if (hasInvalidPrices) {
+      alert('Please set a selling price greater than 0 for all products');
       return;
     }
 
@@ -148,20 +174,25 @@ const NewSale = ({ user }) => {
     try {
       const saleData = {
         saleNumber: generateSaleNumber(),
-        items: selectedProducts.map(p => ({
-          product: p._id || p.id,
-          quantity: p.quantity,
-          unitPrice: p.sellingPrice || (p.cost * 1.5),
-          subtotal: p.subtotal
-        })),
-        totalAmount: totalAmount,
+        items: selectedProducts.map(p => {
+          const unitPrice = p.sellingPrice || 0;
+          const quantity = p.quantity || 0;
+          const subtotal = unitPrice * quantity;
+          return {
+            product: p._id || p.id,
+            quantity,
+            unitPrice,
+            subtotal: isNaN(subtotal) ? 0 : subtotal
+          };
+        }),
+        totalAmount: calculateTotal() || 0,
         paymentMethod: isPartialPayment ? 'Partial' : (isDebt ? 'Debt' : paymentMethod.charAt(0).toUpperCase() + paymentMethod.slice(1)),
         isDebt: finalIsDebt,
         paidAmount: actualPaidAmount,
         remainingDebt: remainingDebtAmount,
-        customerName: customerInfo.name,
-        customerEmail: customerInfo.email,
-        customerPhone: customerInfo.phone,
+        customerName: customerInfo.name.trim(),
+        customerEmail: customerInfo.email.trim(),
+        customerPhone: customerInfo.phone.trim(),
         salesperson: user?.name || 'Unknown'
       };
 
@@ -291,18 +322,17 @@ const NewSale = ({ user }) => {
                     {filteredProducts.length > 0 ? (
                       filteredProducts.map(product => (
                         <div
-                          key={product.id}
+                          key={product._id || product.id}
                           onClick={() => addProduct(product)}
                           className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
                         >
                           <div className="flex justify-between items-center">
                             <div>
                               <p className="font-medium text-gray-900">{product.name}</p>
-                              <p className="text-sm text-gray-500">SKU: {product.sku} | Stock: {product.stock}</p>
+                              <p className="text-sm text-gray-500">SKU: {product.sku} | Stock: {product.stockQuantity}</p>
                             </div>
                             <div className="text-right">
-                              <p className="font-medium text-gray-900">${product.price.toFixed(2)}</p>
-                              <p className="text-xs text-gray-500">{product.category}</p>
+                              <p className="text-xs text-gray-500">Cost: FRw {product.cost.toFixed(2)}</p>
                             </div>
                           </div>
                         </div>
@@ -331,12 +361,13 @@ const NewSale = ({ user }) => {
                             <input
                               type="number"
                               step="0.01"
-                              value={product.sellingPrice || (product.cost * 1.5)}
+                              value={product.sellingPrice || 0}
                               onChange={(e) => {
-                                const newSellingPrice = parseFloat(e.target.value) || 0;
+                                const value = e.target.value;
+                                const newSellingPrice = value === '' ? 0 : parseFloat(value) || 0;
                                 setSelectedProducts(selectedProducts.map(p => 
                                   (p._id || p.id) === (product._id || product.id)
-                                    ? { ...p, sellingPrice: newSellingPrice, subtotal: newSellingPrice * p.quantity }
+                                    ? { ...p, sellingPrice: newSellingPrice }
                                     : p
                                 ));
                               }}
@@ -434,7 +465,7 @@ const NewSale = ({ user }) => {
                     />
                     <span className="flex items-center">
                       <CreditCard className="h-4 w-4 mr-2" />
-                      Full Payment - Card
+                      Full Payment - Momo
                     </span>
                   </label>
                   <label className="flex items-center">

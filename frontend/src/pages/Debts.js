@@ -24,6 +24,9 @@ const Debts = ({ user }) => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [paymentAmount, setPaymentAmount] = useState('');
   const [stats, setStats] = useState({
     totalDebt: 0,
     totalCustomers: 0,
@@ -139,6 +142,36 @@ const Debts = ({ user }) => {
   const getStatusIcon = (amount) => {
     if (amount > 0) return <Clock className="h-4 w-4" />;
     return <CheckCircle className="h-4 w-4" />;
+  };
+
+  const handleRecordPayment = (customer) => {
+    setSelectedCustomer(customer);
+    setPaymentAmount('');
+    setShowPaymentModal(true);
+  };
+
+  const handlePaymentSubmit = async () => {
+    if (!paymentAmount || parseFloat(paymentAmount) <= 0) {
+      alert('Please enter a valid payment amount');
+      return;
+    }
+
+    if (parseFloat(paymentAmount) > selectedCustomer.pendingAmount) {
+      alert('Payment amount cannot exceed remaining debt');
+      return;
+    }
+
+    try {
+      // TODO: Create payment API call
+      alert(`Payment of FRw ${parseFloat(paymentAmount).toFixed(2)} recorded for ${selectedCustomer.customerName}`);
+      setShowPaymentModal(false);
+      setSelectedCustomer(null);
+      setPaymentAmount('');
+      fetchDebts(); // Refresh the debts list
+    } catch (error) {
+      console.error('Error recording payment:', error);
+      alert('Error recording payment');
+    }
   };
 
   if (loading) {
@@ -286,6 +319,12 @@ const Debts = ({ user }) => {
                       Total Debt
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Amount Paid
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Remaining
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Status
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -336,6 +375,16 @@ const Debts = ({ user }) => {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-green-600">
+                          FRw {debt.paidAmount.toFixed(2)}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-bold text-orange-600">
+                          FRw {debt.pendingAmount.toFixed(2)}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(debt.pendingAmount)}`}>
                           {getStatusIcon(debt.pendingAmount)}
                           <span className="ml-1">
@@ -351,7 +400,10 @@ const Debts = ({ user }) => {
                           View Details
                         </button>
                         {debt.pendingAmount > 0 && (
-                          <button className="text-green-600 hover:text-green-900">
+                          <button 
+                            onClick={() => handleRecordPayment(debt)}
+                            className="text-green-600 hover:text-green-900"
+                          >
                             Record Payment
                           </button>
                         )}
@@ -364,6 +416,70 @@ const Debts = ({ user }) => {
           )}
         </div>
       </div>
+
+      {/* Payment Modal */}
+      {showPaymentModal && selectedCustomer && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-md w-full p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Record Payment for {selectedCustomer.customerName}
+            </h3>
+            
+            <div className="mb-4">
+              <div className="bg-gray-50 rounded-lg p-3 mb-4">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Total Debt:</span>
+                  <span className="font-medium">FRw {selectedCustomer.totalDebt.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Already Paid:</span>
+                  <span className="font-medium text-green-600">FRw {selectedCustomer.paidAmount.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-sm font-medium pt-2 border-t">
+                  <span>Remaining:</span>
+                  <span className="text-orange-600">FRw {selectedCustomer.pendingAmount.toFixed(2)}</span>
+                </div>
+              </div>
+              
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Payment Amount
+              </label>
+              <div className="flex items-center">
+                <span className="text-gray-500 mr-2">FRw</span>
+                <input
+                  type="number"
+                  value={paymentAmount}
+                  onChange={(e) => setPaymentAmount(e.target.value)}
+                  min="0"
+                  max={selectedCustomer.pendingAmount}
+                  step="0.01"
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                  placeholder="Enter payment amount"
+                />
+              </div>
+            </div>
+            
+            <div className="flex space-x-3">
+              <button
+                onClick={handlePaymentSubmit}
+                className="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition"
+              >
+                Record Payment
+              </button>
+              <button
+                onClick={() => {
+                  setShowPaymentModal(false);
+                  setSelectedCustomer(null);
+                  setPaymentAmount('');
+                }}
+                className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

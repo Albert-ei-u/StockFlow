@@ -111,7 +111,6 @@ const NewSale = ({ user }) => {
 
     setLoading(true);
     try {
-      // Simulate API call - replace with actual API call
       const saleData = {
         items: selectedProducts.map(p => ({
           productId: p.id,
@@ -121,15 +120,13 @@ const NewSale = ({ user }) => {
         })),
         totalAmount: calculateGrandTotal(),
         paymentMethod,
-        customerInfo,
-        salesperson: user?.name || 'Unknown',
-        businessId: user?.businessId || '1'
+        customerName: customerInfo.name,
+        customerEmail: customerInfo.email,
+        customerPhone: customerInfo.phone,
+        salesperson: user?.name || 'Unknown'
       };
 
-      console.log('Saving sale:', saleData);
-      
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const response = await saleAPI.create(saleData);
       
       alert('Sale saved successfully!');
       setSelectedProducts([]);
@@ -137,7 +134,7 @@ const NewSale = ({ user }) => {
       setPaymentMethod('cash');
     } catch (error) {
       console.error('Error saving sale:', error);
-      alert('Error saving sale');
+      alert('Error saving sale: ' + (error.response?.data?.message || 'Unknown error'));
     } finally {
       setLoading(false);
     }

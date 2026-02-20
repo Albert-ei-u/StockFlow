@@ -7,6 +7,7 @@ import { dirname, join } from "path";
 
 // Import routes directly
 import authRoutes from './routes/auth.js';
+import dashboardRoutes from './routes/dashboard.js';
 import productRoutes from './routes/products.js';
 import saleRoutes from './routes/sales.js';
 import inventoryRoutes from './routes/inventory.js';
@@ -28,6 +29,7 @@ mongoose.connect(process.env.MONGO_URI || "mongodb://localhost:27017/salesflow")
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/sales', saleRoutes);
 app.use('/api/inventory', inventoryRoutes);

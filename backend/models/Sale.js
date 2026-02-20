@@ -37,7 +37,19 @@ const saleSchema = new mongoose.Schema({
     paymentMethod: {
         type: String,
         required: true,
-        enum: ['Cash', 'Card', 'Mobile Money', 'Bank Transfer']
+        enum: ['Cash', 'Card', 'Mobile Money', 'Bank Transfer', 'Debt', 'Partial']
+    },
+    isDebt: {
+        type: Boolean,
+        default: false
+    },
+    paidAmount: {
+        type: Number,
+        default: 0
+    },
+    remainingDebt: {
+        type: Number,
+        default: 0
     },
     customerName: {
         type: String,
@@ -47,6 +59,10 @@ const saleSchema = new mongoose.Schema({
         type: String,
         trim: true,
         lowercase: true
+    },
+    customerPhone: {
+        type: String,
+        trim: true
     },
     salesperson: {
         type: String,

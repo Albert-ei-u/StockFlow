@@ -34,7 +34,7 @@ export const getSale = async (req, res) => {
 // @route   POST /api/sales
 export const createSale = async (req, res) => {
     try {
-        const { items, paymentMethod, customerName, customerEmail, salesperson, notes } = req.body;
+        const { items, paymentMethod, customerName, customerEmail, customerPhone, salesperson, notes, paidAmount, remainingDebt } = req.body;
 
         // Validate stock availability
         for (const item of items) {
@@ -55,20 +55,27 @@ export const createSale = async (req, res) => {
         // Calculate total
         const totalAmount = items.reduce((total, item) => total + item.subtotal, 0);
 
+        // Determine if this is a debt sale
+        const isDebtSale = paymentMethod === 'Debt' || (paymentMethod === 'Partial' && remainingDebt > 0);
+
         // Create sale
         const sale = new Sale({
             items,
             totalAmount,
             paymentMethod,
+            isDebt: isDebtSale,
+            paidAmount: paidAmount || 0,
+            remainingDebt: remainingDebt || 0,
             customerName,
             customerEmail,
+            customerPhone,
             salesperson,
             notes
         });
 
         const savedSale = await sale.save();
 
-        // Update product stock and inventory
+        // Update product stock and inventory (stock decreases for all sales including partial payments)
         for (const item of items) {
             await Product.findByIdAndUpdate(
                 item.product,
@@ -84,7 +91,7 @@ export const createSale = async (req, res) => {
                             type: 'OUT',
                             quantity: item.quantity,
                             reference: savedSale.saleNumber,
-                            notes: `Sale: ${customerName || 'Walk-in customer'}`
+                            notes: `Sale: ${customerName || 'Walk-in customer'} (${paymentMethod})`
                         }
                     }
                 }

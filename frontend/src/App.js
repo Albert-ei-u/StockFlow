@@ -8,6 +8,7 @@ import Dashboard from './pages/Dashboard';
 import NewSale from './pages/NewSale';
 import Products from './pages/Products';
 import SalesHistory from './pages/SalesHistory';
+import Debts from './pages/Debts';
 import './index.css';
 
 function App() {
@@ -63,6 +64,14 @@ function App() {
             element={isAuthenticated ? <Dashboard user={user} onLogout={handleLogout} /> : <Navigate to="/login" />} 
           />
           <Route 
+            path="/sales-history" 
+            element={isAuthenticated ? <SalesHistory user={user} /> : <Navigate to="/login" />} 
+          />
+          <Route 
+            path="/debts" 
+            element={isAuthenticated ? <Debts user={user} /> : <Navigate to="/login" />} 
+          />
+          <Route 
             path="/new-sale" 
             element={isAuthenticated ? <NewSale user={user} /> : <Navigate to="/login" />} 
           />
@@ -70,11 +79,6 @@ function App() {
             path="/products" 
             element={isAuthenticated ? <Products user={user} /> : <Navigate to="/login" />} 
           />
-          <Route 
-            path="/sales-history" 
-            element={isAuthenticated ? <SalesHistory user={user} /> : <Navigate to="/login" />} 
-          />
-          
           <Route 
             path="/" 
             element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} />} 

@@ -26,6 +26,9 @@ const NewSale = ({ user }) => {
     phone: ''
   });
   const [paymentMethod, setPaymentMethod] = useState('cash');
+  const [isDebt, setIsDebt] = useState(false);
+  const [isPartialPayment, setIsPartialPayment] = useState(false);
+  const [paidAmount, setPaidAmount] = useState('');
   const [loading, setLoading] = useState(false);
   const [showProductSearch, setShowProductSearch] = useState(false);
 
@@ -106,6 +109,35 @@ const NewSale = ({ user }) => {
       return;
     }
 
+    const totalAmount = calculateGrandTotal();
+    let actualPaidAmount = 0;
+    let remainingDebtAmount = 0;
+    let finalIsDebt = false;
+
+    if (isPartialPayment && paidAmount) {
+      actualPaidAmount = parseFloat(paidAmount);
+      remainingDebtAmount = totalAmount - actualPaidAmount;
+      finalIsDebt = remainingDebtAmount > 0;
+      
+      if (actualPaidAmount > totalAmount) {
+        alert('Paid amount cannot exceed total amount');
+        return;
+      }
+      
+      if (actualPaidAmount <= 0) {
+        alert('Paid amount must be greater than 0');
+        return;
+      }
+    } else if (isDebt) {
+      finalIsDebt = true;
+      remainingDebtAmount = totalAmount;
+    }
+
+    if ((finalIsDebt || isPartialPayment) && !customerInfo.name.trim()) {
+      alert('Customer name is required for debt/partial payments');
+      return;
+    }
+
     setLoading(true);
     try {
       const saleData = {
@@ -115,8 +147,11 @@ const NewSale = ({ user }) => {
           unitPrice: p.price,
           subtotal: p.subtotal
         })),
-        totalAmount: calculateGrandTotal(),
-        paymentMethod,
+        totalAmount: totalAmount,
+        paymentMethod: isPartialPayment ? 'Partial' : (isDebt ? 'Debt' : paymentMethod),
+        isDebt: finalIsDebt,
+        paidAmount: actualPaidAmount,
+        remainingDebt: remainingDebtAmount,
         customerName: customerInfo.name,
         customerEmail: customerInfo.email,
         customerPhone: customerInfo.phone,
@@ -125,10 +160,25 @@ const NewSale = ({ user }) => {
 
       const response = await saleAPI.create(saleData);
       
-      alert('Sale saved successfully!');
+      let successMessage = '';
+      if (isPartialPayment) {
+        successMessage = `Partial payment successful! FRw ${actualPaidAmount.toFixed(2)} paid, FRw ${remainingDebtAmount.toFixed(2)} remaining.`;
+      } else if (isDebt) {
+        successMessage = 'Debt sale saved successfully!';
+      } else {
+        successMessage = 'Sale saved successfully!';
+      }
+      
+      alert(successMessage);
+      
+      // Reset form
       setSelectedProducts([]);
       setCustomerInfo({ name: '', email: '', phone: '' });
       setPaymentMethod('cash');
+      setIsDebt(false);
+      setIsPartialPayment(false);
+      setPaidAmount('');
+      
     } catch (error) {
       console.error('Error saving sale:', error);
       alert('Error saving sale: ' + (error.response?.data?.message || 'Unknown error'));
@@ -334,30 +384,107 @@ const NewSale = ({ user }) => {
                     <input
                       type="radio"
                       value="cash"
-                      checked={paymentMethod === 'cash'}
-                      onChange={(e) => setPaymentMethod(e.target.value)}
+                      checked={paymentMethod === 'cash' && !isDebt && !isPartialPayment}
+                      onChange={(e) => {
+                        setPaymentMethod(e.target.value);
+                        setIsDebt(false);
+                        setIsPartialPayment(false);
+                        setPaidAmount('');
+                      }}
                       className="mr-2"
                     />
                     <span className="flex items-center">
                       <DollarSign className="h-4 w-4 mr-2" />
-                      Cash
+                      Full Payment - Cash
                     </span>
                   </label>
                   <label className="flex items-center">
                     <input
                       type="radio"
                       value="card"
-                      checked={paymentMethod === 'card'}
-                      onChange={(e) => setPaymentMethod(e.target.value)}
+                      checked={paymentMethod === 'card' && !isDebt && !isPartialPayment}
+                      onChange={(e) => {
+                        setPaymentMethod(e.target.value);
+                        setIsDebt(false);
+                        setIsPartialPayment(false);
+                        setPaidAmount('');
+                      }}
                       className="mr-2"
                     />
                     <span className="flex items-center">
                       <CreditCard className="h-4 w-4 mr-2" />
-                      Card
+                      Full Payment - Card
+                    </span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      value="partial"
+                      checked={isPartialPayment}
+                      onChange={(e) => {
+                        setIsPartialPayment(true);
+                        setIsDebt(false);
+                        setPaymentMethod('partial');
+                      }}
+                      className="mr-2"
+                    />
+                    <span className="flex items-center">
+                      <CreditCard className="h-4 w-4 mr-2 text-blue-500" />
+                      Partial Payment (Pay some now, rest later)
+                    </span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      value="debt"
+                      checked={isDebt}
+                      onChange={(e) => {
+                        setIsDebt(true);
+                        setIsPartialPayment(false);
+                        setPaymentMethod('debt');
+                        setPaidAmount('');
+                      }}
+                      className="mr-2"
+                    />
+                    <span className="flex items-center">
+                      <CreditCard className="h-4 w-4 mr-2 text-orange-500" />
+                      Full Debt (Pay later)
                     </span>
                   </label>
                 </div>
               </div>
+
+              {/* Partial Payment Amount */}
+              {isPartialPayment && (
+                <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Amount Paid Now
+                  </label>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-gray-500">FRw</span>
+                    <input
+                      type="number"
+                      value={paidAmount}
+                      onChange={(e) => setPaidAmount(e.target.value)}
+                      min="0"
+                      max={calculateGrandTotal()}
+                      step="0.01"
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                      placeholder="Enter amount paid now"
+                    />
+                  </div>
+                  {paidAmount && (
+                    <div className="mt-2 text-sm text-gray-600">
+                      Remaining amount: <span className="font-medium text-orange-600">FRw {(calculateGrandTotal() - parseFloat(paidAmount)).toFixed(2)}</span>
+                    </div>
+                  )}
+                  {paidAmount && parseFloat(paidAmount) > calculateGrandTotal() && (
+                    <div className="mt-2 text-sm text-red-600">
+                      Paid amount cannot exceed total amount
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Action Buttons */}
               <div className="mt-6 space-y-3">

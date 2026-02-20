@@ -95,9 +95,7 @@ const NewSale = ({ user }) => {
     return selectedProducts.reduce((total, product) => total + product.subtotal, 0);
   };
 
-  const calculateTax = () => {
-    return calculateTotal() * 0.08; // 8% tax
-  };
+ 
 
   const calculateGrandTotal = () => {
     return calculateTotal() + calculateTax();

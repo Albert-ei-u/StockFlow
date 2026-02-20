@@ -10,11 +10,6 @@ const productSchema = new mongoose.Schema({
         type: String,
         trim: true,
     },
-    category: {
-        type: String,
-        required: [true, "Category is required"],
-        enum: ['electronics', 'clothing', 'home', 'furniture']
-    },
     sku: {
         type: String,
         required: [true, "SKU is required"],
@@ -24,11 +19,6 @@ const productSchema = new mongoose.Schema({
     stock: {
         type: Number,
         required: [true, "Stock is required"]
-    },
-    price: {
-        type: Number,
-        required: [true, "Price is required"],
-        min: [0, "Price must be greater than 0"],
     },
     cost: {
         type: Number,
@@ -59,11 +49,6 @@ const productSchema = new mongoose.Schema({
 },
 {
     timestamps: true
-});
-
-//virtual for profit margin 
-productSchema.virtual('profitMargin').get(function() {
-    return (this.price - this.cost) / this.price;
 });
 
 export default mongoose.model('Product', productSchema);

@@ -22,12 +22,11 @@ const Products = ({ user, onLogout }) => {
   const [formData, setFormData] = useState({
     name: '',
     sku: '',
-    price: '',
     cost: '',
     stock: '',
     stockQuantity: '',
     minStockLevel: '',
-    category: ''
+    supplier: ''
   });
 
   useEffect(() => {
@@ -60,12 +59,11 @@ const Products = ({ user, onLogout }) => {
       setFormData({
         name: '',
         sku: '',
-        price: '',
         cost: '',
         stock: '',
         stockQuantity: '',
         minStockLevel: '',
-        category: ''
+        supplier: ''
       });
     } catch (error) {
       console.error('Error saving product:', error);
@@ -78,12 +76,11 @@ const Products = ({ user, onLogout }) => {
     setFormData({
       name: product.name,
       sku: product.sku,
-      price: product.price,
       cost: product.cost,
       stock: product.stock,
       stockQuantity: product.stockQuantity,
       minStockLevel: product.minStockLevel,
-      category: product.category
+      supplier: product.supplier
     });
     setShowAddModal(true);
   };
@@ -185,9 +182,6 @@ const Products = ({ user, onLogout }) => {
                     SKU
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Price
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Stock
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -201,26 +195,25 @@ const Products = ({ user, onLogout }) => {
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredProducts.map((product) => (
                   <tr key={product._id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       <div className="flex items-center">
                         <Package className="h-5 w-5 text-gray-400 mr-3" />
                         <div>
                           <div className="text-sm font-medium text-gray-900">{product.name}</div>
-                          <div className="text-sm text-gray-500">{product.category}</div>
+                          <div className="text-sm text-gray-500">SKU: {product.sku}</div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {product.sku}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      FRw {product.price.toFixed(2)}
-                    </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <span className="text-sm text-gray-900">{product.stockQuantity}</span>
-                        {isLowStock(product) && (
-                          <AlertTriangle className="h-4 w-4 text-yellow-500 ml-2" />
+                        {product.stockQuantity > 0 ? (
+                          <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            In Stock ({product.stockQuantity})
+                          </span>
+                        ) : (
+                          <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                            Out of Stock
+                          </span>
                         )}
                       </div>
                     </td>
@@ -263,109 +256,122 @@ const Products = ({ user, onLogout }) => {
               {editingProduct ? 'Edit Product' : 'Add New Product'}
             </h3>
             <form onSubmit={handleSubmit}>
-              <div className="space-y-4">
+              <div className="space-y-6">
+                {/* Basic Information */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Product Name
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.name}
-                    onChange={(e) => setFormData({...formData, name: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                  />
+                  <h4 className="text-sm font-medium text-gray-900 mb-3 border-b pb-1">Basic Information</h4>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Product Name
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.name}
+                        onChange={(e) => setFormData({...formData, name: e.target.value})}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                        placeholder="Enter product name"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        SKU
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.sku}
+                        onChange={(e) => setFormData({...formData, sku: e.target.value})}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                        placeholder="Enter SKU"
+                      />
+                    </div>
+                  </div>
                 </div>
+
+                {/* Pricing */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    SKU
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.sku}
-                    onChange={(e) => setFormData({...formData, sku: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                  />
+                  <h4 className="text-sm font-medium text-gray-900 mb-3 border-b pb-1">Pricing</h4>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Cost Price (FRw)
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        required
+                        value={formData.cost}
+                        onChange={(e) => setFormData({...formData, cost: e.target.value})}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                        placeholder="0.00"
+                      />
+                    </div>
+                  </div>
                 </div>
+
+                {/* Stock Information */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Price (FRw)
-                  </label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    required
-                    value={formData.price}
-                    onChange={(e) => setFormData({...formData, price: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                  />
+                  <h4 className="text-sm font-medium text-gray-900 mb-3 border-b pb-1">Stock Information</h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Stock
+                      </label>
+                      <input
+                        type="number"
+                        required
+                        value={formData.stock}
+                        onChange={(e) => setFormData({...formData, stock: e.target.value})}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                        placeholder="0"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Stock Quantity
+                      </label>
+                      <input
+                        type="number"
+                        required
+                        value={formData.stockQuantity}
+                        onChange={(e) => setFormData({...formData, stockQuantity: e.target.value})}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                        placeholder="0"
+                      />
+                    </div>
+                  </div>
+                  <div className="mt-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Minimum Stock Level
+                    </label>
+                    <input
+                      type="number"
+                      required
+                      value={formData.minStockLevel}
+                      onChange={(e) => setFormData({...formData, minStockLevel: e.target.value})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                      placeholder="0"
+                    />
+                  </div>
                 </div>
+
+                {/* Supplier Information */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Cost (FRw)
-                  </label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    required
-                    value={formData.cost}
-                    onChange={(e) => setFormData({...formData, cost: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Stock
-                  </label>
-                  <input
-                    type="number"
-                    required
-                    value={formData.stock}
-                    onChange={(e) => setFormData({...formData, stock: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Stock Quantity
-                  </label>
-                  <input
-                    type="number"
-                    required
-                    value={formData.stockQuantity}
-                    onChange={(e) => setFormData({...formData, stockQuantity: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Minimum Stock Level
-                  </label>
-                  <input
-                    type="number"
-                    required
-                    value={formData.minStockLevel}
-                    onChange={(e) => setFormData({...formData, minStockLevel: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Category
-                  </label>
-                  <select
-                    required
-                    value={formData.category}
-                    onChange={(e) => setFormData({...formData, category: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                  >
-                    <option value="">Select a category</option>
-                    <option value="electronics">Electronics</option>
-                    <option value="clothing">Clothing</option>
-                    <option value="home">Home</option>
-                    <option value="furniture">Furniture</option>
-                  </select>
+                  <h4 className="text-sm font-medium text-gray-900 mb-3 border-b pb-1">Supplier Information</h4>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Supplier
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.supplier}
+                      onChange={(e) => setFormData({...formData, supplier: e.target.value})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                      placeholder="Enter supplier name"
+                    />
+                  </div>
                 </div>
               </div>
               <div className="flex justify-end space-x-3 mt-6">
@@ -377,12 +383,11 @@ const Products = ({ user, onLogout }) => {
                     setFormData({
                       name: '',
                       sku: '',
-                      price: '',
                       cost: '',
                       stock: '',
                       stockQuantity: '',
                       minStockLevel: '',
-                      category: ''
+                      supplier: ''
                     });
                   }}
                   className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition"

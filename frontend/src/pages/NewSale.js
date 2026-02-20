@@ -57,7 +57,7 @@ const NewSale = ({ user }) => {
       if (existingProduct.quantity < product.stock) {
         setSelectedProducts(selectedProducts.map(p =>
           (p._id || p.id) === (product._id || product.id) 
-            ? { ...p, quantity: p.quantity + 1, subtotal: (p.quantity + 1) * p.price }
+            ? { ...p, quantity: p.quantity + 1, subtotal: (p.quantity + 1) * (p.sellingPrice || p.cost * 1.5) }
             : p
         ));
       }
@@ -65,7 +65,8 @@ const NewSale = ({ user }) => {
       setSelectedProducts([...selectedProducts, {
         ...product,
         quantity: 1,
-        subtotal: product.price
+        sellingPrice: product.cost * 1.5, // Default selling price (50% markup)
+        subtotal: product.cost * 1.5
       }]);
     }
     setShowProductSearch(false);
@@ -80,7 +81,7 @@ const NewSale = ({ user }) => {
           return {
             ...product,
             quantity: newQuantity,
-            subtotal: newQuantity * product.price
+            subtotal: newQuantity * (product.sellingPrice || product.cost * 1.5)
           };
         }
       }
@@ -100,6 +101,13 @@ const NewSale = ({ user }) => {
     return calculateTotal();
   };
 
+
+  // Generate unique sale number
+  const generateSaleNumber = () => {
+    const timestamp = Date.now();
+    const random = Math.floor(Math.random() * 1000);
+    return `SALE-${timestamp}-${random}`;
+  };
 
   const handleSaveSale = async () => {
     if (selectedProducts.length === 0) {
@@ -139,14 +147,15 @@ const NewSale = ({ user }) => {
     setLoading(true);
     try {
       const saleData = {
+        saleNumber: generateSaleNumber(),
         items: selectedProducts.map(p => ({
           product: p._id || p.id,
           quantity: p.quantity,
-          unitPrice: p.price,
+          unitPrice: p.sellingPrice || (p.cost * 1.5),
           subtotal: p.subtotal
         })),
         totalAmount: totalAmount,
-        paymentMethod: isPartialPayment ? 'Partial' : (isDebt ? 'Debt' : paymentMethod),
+        paymentMethod: isPartialPayment ? 'Partial' : (isDebt ? 'Debt' : paymentMethod.charAt(0).toUpperCase() + paymentMethod.slice(1)),
         isDebt: finalIsDebt,
         paidAmount: actualPaidAmount,
         remainingDebt: remainingDebtAmount,
@@ -316,7 +325,24 @@ const NewSale = ({ user }) => {
                       <div key={product._id || product.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                         <div className="flex-1">
                           <p className="font-medium text-gray-900">{product.name}</p>
-                          <p className="text-sm text-gray-500">${product.price.toFixed(2)} each</p>
+                          <p className="text-sm text-gray-500">Cost: FRw {product.cost.toFixed(2)} each</p>
+                          <div className="flex items-center space-x-2 mt-1">
+                            <label className="text-xs text-gray-600">Sell Price:</label>
+                            <input
+                              type="number"
+                              step="0.01"
+                              value={product.sellingPrice || (product.cost * 1.5)}
+                              onChange={(e) => {
+                                const newSellingPrice = parseFloat(e.target.value) || 0;
+                                setSelectedProducts(selectedProducts.map(p => 
+                                  (p._id || p.id) === (product._id || product.id)
+                                    ? { ...p, sellingPrice: newSellingPrice, subtotal: newSellingPrice * p.quantity }
+                                    : p
+                                ));
+                              }}
+                              className="w-24 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500"
+                            />
+                          </div>
                         </div>
                         <div className="flex items-center space-x-2">
                           <button

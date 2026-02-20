@@ -14,8 +14,8 @@ import {
   BarChart3,
   Activity
 } from 'lucide-react';
-
 import { LineChart, Line, BarChart, Bar, PieChart as RePieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { dashboardAPI } from '../services/api';
 
 const Dashboard = ({ user, onLogout }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -38,51 +38,42 @@ const Dashboard = ({ user, onLogout }) => {
 
   const fetchDashboardData = async () => {
     try {
-      // Simulate API calls - replace with actual API calls
       setLoading(true);
       
-      // Mock data for demonstration
-      const mockStats = {
-        totalSales: 45678.50,
-        totalOrders: 234,
-        totalProducts: 56,
-        totalCustomers: 128,
-        salesGrowth: 12.5,
-        ordersGrowth: 8.3
-      };
+      // Fetch real data from backend APIs
+      const [statsResponse, salesResponse, productsResponse, recentSalesResponse] = await Promise.all([
+        dashboardAPI.getStats(),
+        dashboardAPI.getDailySales(7),
+        dashboardAPI.getTopProducts(),
+        dashboardAPI.getRecentSales()
+      ]);
 
-      const mockSalesData = [
-        { name: 'Mon', sales: 2400, orders: 45 },
-        { name: 'Tue', sales: 1398, orders: 28 },
-        { name: 'Wed', sales: 9800, orders: 89 },
-        { name: 'Thu', sales: 3908, orders: 48 },
-        { name: 'Fri', sales: 4800, orders: 67 },
-        { name: 'Sat', sales: 3800, orders: 52 },
-        { name: 'Sun', sales: 4300, orders: 58 }
-      ];
+      setStats(statsResponse.data || {
+        totalSales: 0,
+        totalOrders: 0,
+        totalProducts: 0,
+        totalCustomers: 0,
+        salesGrowth: 0,
+        ordersGrowth: 0
+      });
 
-      const mockTopProducts = [
-        { name: 'Laptop Pro', value: 35, color: '#3B82F6' },
-        { name: 'Phone X', value: 25, color: '#10B981' },
-        { name: 'Tablet Plus', value: 20, color: '#F59E0B' },
-        { name: 'Watch Smart', value: 12, color: '#EF4444' },
-        { name: 'Others', value: 8, color: '#8B5CF6' }
-      ];
-
-      const mockRecentSales = [
-        { id: '1', customer: 'John Doe', amount: 245.99, status: 'completed', date: '2024-01-15' },
-        { id: '2', customer: 'Jane Smith', amount: 189.50, status: 'pending', date: '2024-01-15' },
-        { id: '3', customer: 'Bob Johnson', amount: 425.00, status: 'completed', date: '2024-01-14' },
-        { id: '4', customer: 'Alice Brown', amount: 89.99, status: 'completed', date: '2024-01-14' },
-        { id: '5', customer: 'Charlie Wilson', amount: 312.75, status: 'pending', date: '2024-01-13' }
-      ];
-
-      setStats(mockStats);
-      setSalesData(mockSalesData);
-      setTopProducts(mockTopProducts);
-      setRecentSales(mockRecentSales);
+      setSalesData(salesResponse.data || []);
+      setTopProducts(productsResponse.data || []);
+      setRecentSales(recentSalesResponse.data || []);
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
+      // Set empty data on error
+      setStats({
+        totalSales: 0,
+        totalOrders: 0,
+        totalProducts: 0,
+        totalCustomers: 0,
+        salesGrowth: 0,
+        ordersGrowth: 0
+      });
+      setSalesData([]);
+      setTopProducts([]);
+      setRecentSales([]);
     } finally {
       setLoading(false);
     }

@@ -14,6 +14,7 @@ import {
   Save,
   X
 } from 'lucide-react';
+import { productAPI, saleAPI } from '../services/api';
 
 const NewSale = ({ user }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -34,20 +35,11 @@ const NewSale = ({ user }) => {
 
   const fetchProducts = async () => {
     try {
-      // Simulate API call - replace with actual API call
-      const mockProducts = [
-        { id: '1', name: 'Laptop Pro', sku: 'LP-001', price: 1299.99, stock: 15, category: 'Electronics' },
-        { id: '2', name: 'Phone X', sku: 'PX-002', price: 899.99, stock: 25, category: 'Electronics' },
-        { id: '3', name: 'Tablet Plus', sku: 'TP-003', price: 599.99, stock: 10, category: 'Electronics' },
-        { id: '4', name: 'Watch Smart', sku: 'WS-004', price: 299.99, stock: 30, category: 'Accessories' },
-        { id: '5', name: 'Headphones Pro', sku: 'HP-005', price: 199.99, stock: 50, category: 'Accessories' },
-        { id: '6', name: 'Mouse Wireless', sku: 'MW-006', price: 49.99, stock: 100, category: 'Accessories' },
-        { id: '7', name: 'Keyboard Mechanical', sku: 'KM-007', price: 129.99, stock: 40, category: 'Accessories' },
-        { id: '8', name: 'Monitor 4K', sku: 'M4-008', price: 499.99, stock: 20, category: 'Electronics' }
-      ];
-      setProducts(mockProducts);
+      const response = await productAPI.getAll();
+      setProducts(response.data || []);
     } catch (error) {
       console.error('Error fetching products:', error);
+      setProducts([]);
     }
   };
 

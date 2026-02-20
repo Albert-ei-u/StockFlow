@@ -95,6 +95,10 @@ const NewSale = ({ user }) => {
     return selectedProducts.reduce((total, product) => total + product.subtotal, 0);
   };
 
+  const calculateGrandTotal = () => {
+    return calculateTotal();
+  };
+
 
   const handleSaveSale = async () => {
     if (selectedProducts.length === 0) {

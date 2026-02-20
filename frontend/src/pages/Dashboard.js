@@ -191,7 +191,7 @@ const Dashboard = ({ user, onLogout }) => {
             <StatCard
               title="Total Sales"
               value={stats.totalSales}
-              icon={DollarSign}
+              icon={frwdash}
               change={stats.salesGrowth}
               changeType="positive"
             />

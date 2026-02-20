@@ -121,7 +121,7 @@ const Register = ({ onLogin }) => {
                   value={formData.email}
                   onChange={handleChange}
                   className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition"
-                  placeholder="you@example.com"
+                  placeholder="Enter your email address"
                 />
               </div>
             </div>

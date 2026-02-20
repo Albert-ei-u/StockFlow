@@ -25,6 +25,8 @@ const BusinessRegister = ({ onLogin }) => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [businessCode, setBusinessCode] = useState('');
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -96,8 +98,11 @@ const BusinessRegister = ({ onLogin }) => {
       localStorage.setItem('user', JSON.stringify(response.data.user));
       localStorage.setItem('business', JSON.stringify(response.data.business));
       
+      // Show success modal with business code
+      setBusinessCode(response.data.business.businessCode);
+      setShowSuccessModal(true);
+      
       onLogin(response.data.user, response.data.token);
-      navigate('/dashboard');
       
     } catch (error) {
       console.error('Registration error:', error);
@@ -106,6 +111,11 @@ const BusinessRegister = ({ onLogin }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleModalClose = () => {
+    setShowSuccessModal(false);
+    navigate('/dashboard');
   };
 
   return (
@@ -334,6 +344,43 @@ const BusinessRegister = ({ onLogin }) => {
           </div>
         </form>
       </div>
+
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-md w-full p-6 text-center">
+            <div className="mx-auto h-16 w-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+              <Building className="h-8 w-8 text-green-600" />
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-2">
+              Business Registered Successfully!
+            </h3>
+            <p className="text-gray-600 mb-6">
+              Your business has been created. Share this code with your employees so they can join your business.
+            </p>
+            
+            <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-4 mb-6">
+              <p className="text-sm text-gray-500 mb-2">Your Business Code:</p>
+              <div className="bg-white border-2 border-gray-300 rounded-lg px-4 py-3 font-mono text-2xl font-bold text-blue-600">
+                {businessCode}
+              </div>
+            </div>
+            
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-6">
+              <p className="text-sm text-yellow-800">
+                <strong>Important:</strong> Save this code! You'll need it to add employees to your business.
+              </p>
+            </div>
+            
+            <button
+              onClick={handleModalClose}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition"
+            >
+              Go to Dashboard
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -12,13 +12,18 @@ import {
   Menu,
   X,
   BarChart3,
-  Activity
+  Activity,
+  Building,
+  Copy,
+  Check
 } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, PieChart as RePieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { dashboardAPI } from '../services/api';
 
 const Dashboard = ({ user, onLogout }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [business, setBusiness] = useState(null);
   const [stats, setStats] = useState({
     totalSales: 0,
     totalOrders: 0,
@@ -34,6 +39,11 @@ const Dashboard = ({ user, onLogout }) => {
 
   useEffect(() => {
     fetchDashboardData();
+    // Load business data from localStorage
+    const businessData = localStorage.getItem('business');
+    if (businessData) {
+      setBusiness(JSON.parse(businessData));
+    }
   }, []);
 
   const fetchDashboardData = async () => {
@@ -228,6 +238,37 @@ const Dashboard = ({ user, onLogout }) => {
 
         {/* Main Content */}
         <main className="flex-1 p-6">
+          {/* Business Code Display for Owners */}
+          {user?.role === 'owner' && business && (
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 mb-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <Building className="h-5 w-5 text-blue-600 mr-3" />
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-900">{business.name}</h3>
+                    <p className="text-xs text-gray-600">Business Code</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="bg-white border border-blue-300 rounded-lg px-3 py-2 font-mono text-lg font-bold text-blue-600">
+                    {business.businessCode}
+                  </div>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(business.businessCode);
+                      setCopied(true);
+                      setTimeout(() => setCopied(false), 2000);
+                    }}
+                    className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition"
+                    title="Copy business code"
+                  >
+                    {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <StatCard

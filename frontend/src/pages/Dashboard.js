@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -23,6 +23,7 @@ import { dashboardAPI } from '../services/api';
 import SettingsPage from './Settings.js';
 
 const Dashboard = ({ user, onLogout }) => {
+  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [business, setBusiness] = useState(null);
@@ -127,9 +128,9 @@ const Dashboard = ({ user, onLogout }) => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="px-4 sm:px-6 lg:px-8">
+      {/* Header - Fixed */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm border-b border-gray-200">
+        <div className="px-4 sm:px-6 lg:px-8 lg:pl-72">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <button
@@ -154,67 +155,66 @@ const Dashboard = ({ user, onLogout }) => {
         </div>
       </header>
 
-      <div className="flex">
-        {/* Sidebar */}
-        <aside className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 lg:flex lg:flex-col`}>
-          <div className="flex items-center justify-center h-16 bg-blue-600 text-white">
-            <h2 className="text-xl font-bold">SalesFlow</h2>
-          </div>
-          <nav className="mt-8 flex-1">
-            <div className="px-4 space-y-2">
-              <Link
-                to="/dashboard"
-                className="flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg"
-              >
-                <BarChart3 className="h-5 w-5 mr-3" />
-                Dashboard
-              </Link>
-              <Link
-                to="/new-sale"
-                className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition"
-              >
-                <Plus className="h-5 w-5 mr-3" />
-                New Sale
-              </Link>
-              <Link
-                to="/products"
-                className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition ${
-                  user?.role === 'staff' 
-                    ? 'text-gray-400 cursor-not-allowed' 
-                    : 'text-gray-700 hover:bg-gray-100'
-                }`}
-                onClick={(e) => user?.role === 'staff' && e.preventDefault()}
-              >
-                <Building className="h-5 w-5 mr-3" />
-                Products
-              </Link>
-              <Link
-                to="/sales-history"
-                className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition ${
-                  user?.role === 'staff' 
-                    ? 'text-gray-400 cursor-not-allowed' 
-                    : 'text-gray-700 hover:bg-gray-100'
-                }`}
-                onClick={(e) => user?.role === 'staff' && e.preventDefault()}
-              >
-                <ShoppingCart className="h-5 w-5 mr-3" />
-                Sales
-              </Link>
-              <Link
-                to="/debts"
-                className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition ${
-                  user?.role === 'staff' 
-                    ? 'text-gray-400 cursor-not-allowed' 
-                    : 'text-gray-700 hover:bg-gray-100'
-                }`}
-                onClick={(e) => user?.role === 'staff' && e.preventDefault()}
-              >
-                <CreditCard className="h-5 w-5 mr-3" />
-                Debts
-              </Link>
-            </div>
-          </nav>
-          <div className="px-4 pb-4 space-y-2 border-t border-gray-200 pt-4">
+      {/* Sidebar - Fixed */}
+      <aside className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} fixed inset-y-0 left-0 z-40 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0`}>
+        <div className="flex items-center justify-center h-16 bg-blue-600 text-white">
+          <h2 className="text-xl font-bold">SalesFlow</h2>
+        </div>
+        <nav className="mt-8 flex-1 overflow-y-auto">
+          <div className="px-4 space-y-2">
+            <Link
+              to="/dashboard"
+              className="flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg"
+            >
+              <BarChart3 className="h-5 w-5 mr-3" />
+              Dashboard
+            </Link>
+            <Link
+              to="/new-sale"
+              className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition"
+            >
+              <Plus className="h-5 w-5 mr-3" />
+              New Sale
+            </Link>
+            <Link
+              to="/products"
+              className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition ${
+                user?.role === 'staff' 
+                  ? 'text-gray-400 cursor-not-allowed' 
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}
+              onClick={(e) => user?.role === 'staff' && e.preventDefault()}
+            >
+              <Building className="h-5 w-5 mr-3" />
+              Products
+            </Link>
+            <Link
+              to="/sales-history"
+              className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition ${
+                user?.role === 'staff' 
+                  ? 'text-gray-400 cursor-not-allowed' 
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}
+              onClick={(e) => user?.role === 'staff' && e.preventDefault()}
+            >
+              <ShoppingCart className="h-5 w-5 mr-3" />
+              Sales
+            </Link>
+            <Link
+              to="/debts"
+              className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition ${
+                user?.role === 'staff' 
+                  ? 'text-gray-400 cursor-not-allowed' 
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}
+              onClick={(e) => user?.role === 'staff' && e.preventDefault()}
+            >
+              <CreditCard className="h-5 w-5 mr-3" />
+              Debts
+              {user?.role === 'staff' && (
+                <span className="ml-2 text-xs bg-gray-200 px-2 py-1 rounded">Owner Only</span>
+              )}
+            </Link>
             <button 
               className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition w-full text-left ${
                 user?.role === 'staff' 
@@ -229,28 +229,32 @@ const Dashboard = ({ user, onLogout }) => {
                 <span className="ml-2 text-xs bg-gray-200 px-2 py-1 rounded">Owner Only</span>
               )}
             </button>
-            <button 
-              onClick={() => {
-                if (user?.role === 'staff') {
-                  alert('Only business owners can access Settings');
-                  return;
-                }
-                window.location.href = '/settings';
-              }}
-              className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition w-full text-left ${
-                user?.role === 'staff' 
-                  ? 'text-gray-400 cursor-not-allowed' 
-                  : 'text-gray-700 hover:bg-gray-100'
-              }`}
-            >
-              <Settings className="h-5 w-5 mr-3" />
-              Settings
-            </button>
           </div>
-        </aside>
+        </nav>
+        <div className="px-4 pb-4 border-t border-gray-200 pt-4">
+          <button 
+            onClick={() => {
+              if (user?.role === 'staff') {
+                alert('Only business owners can access Settings');
+                return;
+              }
+              navigate('/settings');
+            }}
+            className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition w-full text-left ${
+              user?.role === 'staff' 
+                ? 'text-gray-400 cursor-not-allowed' 
+                : 'text-gray-700 hover:bg-gray-100'
+            }`}
+          >
+            <Settings className="h-5 w-5 mr-3" />
+            Settings
+          </button>
+        </div>
+      </aside>
 
-        {/* Main Content */}
-        <main className="flex-1 p-6">
+      {/* Main Content - Scrollable with proper offset */}
+      <main className="pt-16 pl-64 lg:pl-64 min-h-screen">
+        <div className="p-6 overflow-y-auto">
           {/* Business Code Display for Owners */}
           {user?.role === 'owner' && business && (
             <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 mb-6">
@@ -417,8 +421,8 @@ const Dashboard = ({ user, onLogout }) => {
               </table>
             </div>
           </div>
-        </main>
-      </div>
+        </div>
+      </main>
     </div>
   );
 };

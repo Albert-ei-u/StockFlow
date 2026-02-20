@@ -130,6 +130,18 @@ const Dashboard = ({ user, onLogout }) => {
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
+              <Link
+                to="/settings"
+                className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition ${
+                  user?.role === 'staff' 
+                    ? 'text-gray-400 cursor-not-allowed' 
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
+                onClick={(e) => user?.role === 'staff' && e.preventDefault()}
+              >
+                <Settings className="h-5 w-5 mr-3" />
+                Settings
+              </Link>
               <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
                 className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 lg:hidden"
@@ -227,9 +239,20 @@ const Dashboard = ({ user, onLogout }) => {
                 }`}
                 disabled={user?.role === 'staff'}
               >
+                <Settings className="h-5 w-5 mr-3" />
+                Settings
+              </button>
+              <button 
+                className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition w-full text-left ${
+                  user?.role === 'staff' 
+                    ? 'text-gray-400 cursor-not-allowed' 
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
+                disabled={user?.role === 'staff'}
+              >
                 <Activity className="h-5 w-5 mr-3" />
                 Reports
-                {user?.role === 'staff' && (
+                {user?.role === 'owner' && (
                   <span className="ml-2 text-xs bg-gray-200 px-2 py-1 rounded">Owner Only</span>
                 )}
               </button>

@@ -9,6 +9,7 @@ import NewSale from './pages/NewSale';
 import Products from './pages/Products';
 import SalesHistory from './pages/SalesHistory';
 import Debts from './pages/Debts';
+import SettingsPage from './pages/Settings';
 import './index.css';
 
 function App() {
@@ -66,6 +67,10 @@ function App() {
           <Route 
             path="/sales-history" 
             element={isAuthenticated ? <SalesHistory user={user} /> : <Navigate to="/login" />} 
+          />
+          <Route 
+            path="/settings" 
+            element={isAuthenticated ? <SettingsPage user={user} onLogout={handleLogout} /> : <Navigate to="/login" />} 
           />
           <Route 
             path="/debts" 

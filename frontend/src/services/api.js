@@ -56,11 +56,10 @@ export const inventoryAPI = {
 
 // Dashboard APIs
 export const dashboardAPI = {
-  getSalesSummary: () => api.get('/reports/sales-summary'),
-  getTopProducts: () => api.get('/reports/top-products'),
-  getDailySales: (days = 7) => api.get(`/reports/daily-sales/${days}`),
-  getRecentSales: () => api.get('/sales/recent'),
   getStats: () => api.get('/dashboard/stats'),
+  getDailySales: (days = 7) => api.get(`/dashboard/daily-sales/${days}`),
+  getTopProducts: () => api.get('/dashboard/top-products'),
+  getRecentSales: () => api.get('/dashboard/recent-sales'),
 };
 
 export default api;

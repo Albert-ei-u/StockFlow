@@ -5,6 +5,7 @@ import Register from './pages/Register';
 import JoinBusiness from './pages/JoinBusiness';
 import Dashboard from './pages/Dashboard';
 import NewSale from './pages/NewSale';
+import Products from './pages/Products';
 import './index.css';
 
 function App() {
@@ -58,6 +59,10 @@ function App() {
           <Route 
             path="/new-sale" 
             element={isAuthenticated ? <NewSale user={user} /> : <Navigate to="/login" />} 
+          />
+          <Route 
+            path="/products" 
+            element={isAuthenticated ? <Products user={user} /> : <Navigate to="/login" />} 
           />
           
           <Route 

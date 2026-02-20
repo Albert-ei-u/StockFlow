@@ -9,12 +9,14 @@ import NewSale from './pages/NewSale';
 import Products from './pages/Products';
 import SalesHistory from './pages/SalesHistory';
 import Debts from './pages/Debts';
+import Employees from './pages/Employees';
 import SettingsPage from './pages/Settings';
 import './index.css';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
+  const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -24,7 +26,26 @@ function App() {
       setIsAuthenticated(true);
       setUser(JSON.parse(userData));
     }
+
+    // Load dark mode setting
+    const savedSettings = localStorage.getItem('settings');
+    if (savedSettings) {
+      const settings = JSON.parse(savedSettings);
+      setDarkMode(settings.darkMode || false);
+      if (settings.darkMode) {
+        document.documentElement.classList.add('dark');
+      }
+    }
   }, []);
+
+  useEffect(() => {
+    // Apply dark mode when it changes
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
 
   const handleLogin = (userData, token) => {
     localStorage.setItem('token', token);
@@ -70,11 +91,15 @@ function App() {
           />
           <Route 
             path="/settings" 
-            element={isAuthenticated ? <SettingsPage user={user} onLogout={handleLogout} /> : <Navigate to="/login" />} 
+            element={isAuthenticated ? <SettingsPage user={user} onLogout={handleLogout} darkMode={darkMode} setDarkMode={setDarkMode} /> : <Navigate to="/login" />} 
           />
           <Route 
             path="/debts" 
             element={isAuthenticated ? <Debts user={user} /> : <Navigate to="/login" />} 
+          />
+          <Route 
+            path="/employees" 
+            element={isAuthenticated ? <Employees user={user} /> : <Navigate to="/login" />} 
           />
           <Route 
             path="/new-sale" 

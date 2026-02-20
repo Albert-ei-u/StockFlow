@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { User, Settings, Bell, Moon, Sun, LogOut, Users, CreditCard, Globe, Shield, Palette, Database, Lock } from 'lucide-react';
 import { dashboardAPI } from '../services/api';
 
-const SettingsPage = ({ user, onLogout }) => {
-  const [darkMode, setDarkMode] = useState(false);
+const SettingsPage = ({ user, onLogout, darkMode, setDarkMode }) => {
   const [language, setLanguage] = useState('en');
   const [notifications, setNotifications] = useState(true);
   const [activeTab, setActiveTab] = useState('profile');
@@ -13,7 +12,6 @@ const SettingsPage = ({ user, onLogout }) => {
     const savedSettings = localStorage.getItem('settings');
     if (savedSettings) {
       const settings = JSON.parse(savedSettings);
-      setDarkMode(settings.darkMode || false);
       setLanguage(settings.language || 'en');
       setNotifications(settings.notifications !== false);
     }
@@ -32,7 +30,6 @@ const SettingsPage = ({ user, onLogout }) => {
   const tabs = [
     { id: 'profile', label: 'Profile', icon: User },
     { id: 'business', label: 'Business', icon: Globe },
-    { id: 'employees', label: 'Employees', icon: Users },
     { id: 'security', label: 'Security', icon: Shield },
     { id: 'preferences', label: 'Preferences', icon: Palette },
     { id: 'data', label: 'Data Management', icon: Database },
@@ -165,45 +162,6 @@ const SettingsPage = ({ user, onLogout }) => {
                       rows="3"
                       placeholder="Enter business address"
                     />
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {activeTab === 'employees' && (
-              <div className="bg-white rounded-lg shadow p-6">
-                <h3 className="text-lg font-semibold mb-4">Employee Management</h3>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center mb-4">
-                    <h4 className="text-md font-medium">Current Employees</h4>
-                    <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                      Add Employee
-                    </button>
-                  </div>
-                  <div className="border-t pt-4">
-                    <div className="space-y-2">
-                      {['John Doe', 'Jane Smith', 'Mike Johnson'].map((employee, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                          <div className="flex items-center">
-                            <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
-                              <span className="text-white font-medium">{employee.name.charAt(0)}</span>
-                            </div>
-                            <div>
-                              <p className="font-medium">{employee}</p>
-                              <p className="text-sm text-gray-500">Employee</p>
-                            </div>
-                          </div>
-                          <div className="flex items-center">
-                            <div className="w-3 h-3 bg-green-500 rounded-full flex items-center justify-center">
-                              <span className="text-white font-medium">A</span>
-                            </div>
-                          </div>
-                          <button className="text-red-600 hover:text-red-800">
-                            <LogOut className="h-4 w-4" />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
                   </div>
                 </div>
               </div>

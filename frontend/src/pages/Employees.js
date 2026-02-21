@@ -19,12 +19,8 @@ const Employees = ({ user }) => {
     if (savedEmployees) {
       setEmployees(JSON.parse(savedEmployees));
     } else {
-      // Sample data
-      setEmployees([
-        { id: 1, name: 'John Doe', email: 'john@example.com', phone: '+250788123456', role: 'staff', joinDate: '2024-01-15', status: 'active' },
-        { id: 2, name: 'Jane Smith', email: 'jane@example.com', phone: '+250788123457', role: 'manager', joinDate: '2024-01-20', status: 'active' },
-        { id: 3, name: 'Mike Johnson', email: 'mike@example.com', phone: '+250788123458', role: 'staff', joinDate: '2024-02-01', status: 'active' }
-      ]);
+      // Start with empty array
+      setEmployees([]);
     }
   }, []);
 

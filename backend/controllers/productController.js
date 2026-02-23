@@ -14,7 +14,7 @@ export const getProducts = async (req, res) => {
 
 // @desc    Get single product
 // @route   GET /api/products/:id
-export const getProduct = async (req, res) => {
+export const agetProduct = async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
         if (!product) {

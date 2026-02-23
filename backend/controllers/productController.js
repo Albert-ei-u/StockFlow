@@ -26,7 +26,7 @@ export const agetProduct = async (req, res) => {
     }
 };
 
-// @desc   Create product
+// @desc  Create product
 // @route   POST /api/products
 export const createProduct = async (req, res) => {
     try {

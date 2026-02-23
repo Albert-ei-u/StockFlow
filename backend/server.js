@@ -16,7 +16,7 @@ import reportRoutes from './routes/reports.js';
 dotenv.config();
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __dirname = dirname(__filename); 
 
 // Middleware
 app.use(cors());

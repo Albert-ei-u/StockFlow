@@ -17,11 +17,12 @@ dotenv.config();
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename); 
-join(__dirname, "public")
+const publicPath = join(__dirname, "public");
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(express.static(publicPath));
 
 // Database connection
 mongoose.connect(process.env.MONGO_URI || "mongodb://localhost:27017/salesflow")

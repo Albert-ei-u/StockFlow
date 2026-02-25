@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
   Building, 
@@ -24,6 +24,20 @@ const JoinBusiness = ({ onLogin }) => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+
+  // Force light mode on join business page
+  useEffect(() => {
+    document.documentElement.classList.remove('dark');
+    document.body.classList.remove('dark');
+    
+    // Also remove any inline dark styles
+    document.body.style.backgroundColor = '';
+    document.body.style.color = '';
+    
+    return () => {
+      // Cleanup when component unmounts
+    };
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

@@ -30,11 +30,24 @@ function App() {
     // Load dark mode setting
     const savedSettings = localStorage.getItem('settings');
     if (savedSettings) {
-      const settings = JSON.parse(savedSettings);
-      setDarkMode(settings.darkMode || false);
-      if (settings.darkMode) {
-        document.documentElement.classList.add('dark');
+      try {
+        const settings = JSON.parse(savedSettings);
+        setDarkMode(settings.darkMode === true); // Explicitly check for true
+        if (settings.darkMode === true) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      } catch (error) {
+        console.error('Error parsing settings:', error);
+        // Reset to default if settings are corrupted
+        localStorage.removeItem('settings');
+        setDarkMode(false);
+        document.documentElement.classList.remove('dark');
       }
+    } else {
+      // No settings found, ensure light mode
+      document.documentElement.classList.remove('dark');
     }
   }, []);
 

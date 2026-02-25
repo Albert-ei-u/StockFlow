@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, User, Building } from 'lucide-react';
 
@@ -13,6 +13,20 @@ const Register = ({ onLogin }) => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Force light mode on register page
+  useEffect(() => {
+    document.documentElement.classList.remove('dark');
+    document.body.classList.remove('dark');
+    
+    // Also remove any inline dark styles
+    document.body.style.backgroundColor = '';
+    document.body.style.color = '';
+    
+    return () => {
+      // Cleanup when component unmounts
+    };
+  }, []);
 
   const handleChange = (e) => {
     setFormData({
@@ -235,7 +249,7 @@ const Register = ({ onLogin }) => {
 
         {/* Footer */}
         <div className="text-center text-sm text-gray-500">
-          <p>&copy; 2024 SalesFlow. All rights reserved.</p>
+          <p>&copy; 2026 SalesFlow. All rights reserved.</p>
         </div>
       </div>
     </div>

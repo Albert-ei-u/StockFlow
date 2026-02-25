@@ -1,9 +1,21 @@
 import express from "express";
 import mongoose from "mongoose";
-import cors from "cors";
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
+
+// Import middlewares
+import {
+  securityHeaders,
+  corsOptions,
+  sanitizeData,
+  preventXSS,
+  preventHPP,
+  requestLogger,
+  generalLimiter,
+  errorHandler,
+  notFound
+} from './middleware/index.js';
 
 // Import routes directly
 import authRoutes from './routes/auth.js';
@@ -19,9 +31,26 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename); 
 const publicPath = join(__dirname, "public");
 
-// Middleware
-app.use(cors());
-app.use(express.json());
+// Security middlewares
+app.use(securityHeaders);
+app.use(cors(corsOptions));
+
+// Rate limiting
+app.use(generalLimiter);
+
+// Body parsing middlewares
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Data sanitization and security
+app.use(sanitizeData);
+app.use(preventXSS);
+app.use(preventHPP);
+
+// Request logging
+app.use(requestLogger);
+
+// Static files
 app.use(express.static(publicPath));
 
 // Database connection
@@ -36,6 +65,12 @@ app.use('/api/products', productRoutes);
 app.use('/api/sales', saleRoutes);
 app.use('/api/inventory', inventoryRoutes);
 app.use('/api/reports', reportRoutes);
+
+// 404 handler
+app.use(notFound);
+
+// Global error handler
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

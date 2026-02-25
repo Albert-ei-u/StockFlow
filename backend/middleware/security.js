@@ -1,8 +1,45 @@
 import helmet from 'helmet';
 import cors from 'cors';
-import mongoSanitize from 'express-mongo-sanitize';
 import xss from 'xss';
 import hpp from 'hpp';
+
+// Custom MongoDB injection protection
+export const sanitizeData = (req, res, next) => {
+  const sanitize = (obj) => {
+    if (typeof obj !== 'object' || obj === null) {
+      return obj;
+    }
+    
+    if (Array.isArray(obj)) {
+      return obj.map(sanitize);
+    }
+    
+    const sanitized = {};
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        // Remove MongoDB operators
+        if (key.startsWith('$')) {
+          continue;
+        }
+        sanitized[key] = sanitize(obj[key]);
+      }
+    }
+    return sanitized;
+  };
+
+  // Sanitize request body, query, and params
+  if (req.body) {
+    req.body = sanitize(req.body);
+  }
+  if (req.query) {
+    req.query = sanitize(req.query);
+  }
+  if (req.params) {
+    req.params = sanitize(req.params);
+  }
+
+  next();
+};
 
 // Security headers
 export const securityHeaders = helmet({
@@ -34,21 +71,6 @@ export const corsOptions = {
   },
   credentials: true,
   optionsSuccessStatus: 200,
-};
-
-// Data sanitization
-export const sanitizeData = mongoSanitize();
-
-// XSS protection
-export const preventXSS = (req, res, next) => {
-  if (req.body) {
-    Object.keys(req.body).forEach(key => {
-      if (typeof req.body[key] === 'string') {
-        req.body[key] = xss(req.body[key]);
-      }
-    });
-  }
-  next();
 };
 
 // HTTP parameter pollution protection

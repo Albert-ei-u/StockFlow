@@ -4,19 +4,6 @@ import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 
-// Import middlewares
-import {
-  securityHeaders,
-  corsOptions,
-  sanitizeData,
-  preventXSS,
-  preventHPP,
-  requestLogger,
-  generalLimiter,
-  errorHandler,
-  notFound
-} from './middleware/index.js';
-
 // Import routes directly
 import authRoutes from './routes/auth.js';
 import dashboardRoutes from './routes/dashboard.js';
@@ -31,24 +18,21 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename); 
 const publicPath = join(__dirname, "public");
 
-// Security middlewares
-app.use(securityHeaders);
-app.use(cors(corsOptions));
-
-// Rate limiting
-app.use(generalLimiter);
-
-// Body parsing middlewares
+// Basic middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Data sanitization and security
-app.use(sanitizeData);
-app.use(preventXSS);
-app.use(preventHPP);
-
-// Request logging
-app.use(requestLogger);
+// Simple CORS
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
+});
 
 // Static files
 app.use(express.static(publicPath));
@@ -66,11 +50,11 @@ app.use('/api/sales', saleRoutes);
 app.use('/api/inventory', inventoryRoutes);
 app.use('/api/reports', reportRoutes);
 
-// 404 handler
-app.use(notFound);
-
-// Global error handler
-app.use(errorHandler);
+// Simple error handler
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: 'Something went wrong!' });
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

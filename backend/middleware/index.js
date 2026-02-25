@@ -43,15 +43,7 @@ export {
   securityHeaders,
   corsOptions,
   sanitizeData,
-  preventXSS,
   preventHPP,
   requestLogger,
   ipWhitelist
 } from './security.js';
-
-// Audit & Logging
-export {
-  auditLog,
-  logActivity,
-  logSecurityEvent
-} from './audit.js';

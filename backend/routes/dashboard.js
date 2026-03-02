@@ -3,7 +3,7 @@ import { getStats, getDailySales, getTopProducts, getRecentSales } from '../cont
 
 const router = express.Router();
 
-// Get dashboard stats
+// Get  dashboard stats
 router.get('/stats', getStats);
 
 // Get daily sales for chart

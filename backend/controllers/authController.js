@@ -22,7 +22,7 @@ export const registerBusiness = async (req, res) => {
       return res.status(400).json({ message: 'User already exists with this email' });
     }
 
-    // Check if business already exists
+    //Check if business already exists
     const existingBusiness = await Business.findOne({ name: businessName });
     if (existingBusiness) {
       return res.status(400).json({ message: 'Business already exists with this name' });

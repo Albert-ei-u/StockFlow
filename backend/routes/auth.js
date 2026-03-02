@@ -25,7 +25,7 @@ router.post('/register', register);
 // Join Business (for employees)
 router.post('/join-business', joinBusiness);
 
-//  Login
+// Login
 router.post('/login', login);
 
 // Request password reset

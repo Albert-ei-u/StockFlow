@@ -16,7 +16,6 @@ const generateToken = (id) => {
 export const registerBusiness = async (req, res) => {
   try {
     const { name, email, password, businessName, businessDescription } = req.body;
-
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {

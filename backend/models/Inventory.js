@@ -7,7 +7,6 @@ const inventorySchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    
     currentStock: {
         type: Number,
         required: [true, 'Current stock is required'],

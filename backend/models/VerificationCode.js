@@ -16,7 +16,7 @@ const verificationCodeSchema = new mongoose.Schema({
     enum: ['email_verification', 'password_reset'],
     required: true
   },
-
+  
   expiresAt: {
     type: Date,
     default: () => new Date(Date.now() + 10 * 60 * 1000) 
@@ -25,7 +25,6 @@ const verificationCodeSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   }
-  
 }, {
   timestamps: true
 });

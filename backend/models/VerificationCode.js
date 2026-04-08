@@ -2,7 +2,6 @@ import mongoose from 'mongoose';
 
 const verificationCodeSchema = new mongoose.Schema({
   email: {
-    
     type: String,
     required: true,
     lowercase: true
@@ -26,7 +25,7 @@ const verificationCodeSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   }
-
+  
 }, {
   timestamps: true
 });

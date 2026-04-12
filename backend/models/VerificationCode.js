@@ -17,7 +17,7 @@ const verificationCodeSchema = new mongoose.Schema({
   },
   expiresAt: {
     type: Date,
-    default: () => new Date(Date.now() + 10 * 60 * 1000) // 10 minutes in the future
+    default: () => new Date(Date.now() + 10 * 60 * 1000) 
   },
   isUsed: {
     type: Boolean,

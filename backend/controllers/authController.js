@@ -36,6 +36,7 @@ export const registerBusiness = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     // Create business
+    
     const business = new Business({
       name: businessName,
       description: businessDescription,

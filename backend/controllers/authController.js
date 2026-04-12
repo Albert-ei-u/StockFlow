@@ -141,8 +141,7 @@ export const login = async (req, res) => {
     // Check if user exists
     const user = await User.findOne({ email }).populate('businessId');
     if (!user) {
-      return res.status(401).json({ message:
-         'Invalid email or password' });
+      return res.status(401).json({ message: 'Invalid email or password' });
     }
 
     // Check password

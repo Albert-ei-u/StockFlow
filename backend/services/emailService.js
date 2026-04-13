@@ -91,7 +91,6 @@ export const sendVerificationEmail = async (email, code, purpose = 'verification
   };
 
   try {
-    // Only try to send email if credentials are properly configured
     if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
       console.log('Email credentials not configured. Skipping email send.');
       console.log(`Verification code for ${email}: ${code}`);

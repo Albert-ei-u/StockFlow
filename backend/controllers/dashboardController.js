@@ -8,7 +8,6 @@ export const getStats = async (req, res) => {
     const salesResult = await Sale.aggregate([
       {
         $group: {
-          
           _id: null,
           totalSales: { $sum: '$totalAmount' },
           totalOrders: { $sum: 1 }

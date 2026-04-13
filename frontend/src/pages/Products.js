@@ -12,7 +12,6 @@ import {
 import { productAPI } from '../services/api';
 
 const Products = ({ user, onLogout }) => {
-  
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');

@@ -12,6 +12,7 @@ export const getStats = async (req, res) => {
           totalSales: { $sum: '$totalAmount' },
           totalOrders: { $sum: 1 }
         }
+        
       }
     ]);
 

@@ -9,6 +9,7 @@ import {
   AlertTriangle,
   ArrowLeft
 } from 'lucide-react';
+
 import { productAPI } from '../services/api';
 
 const Products = ({ user, onLogout }) => {

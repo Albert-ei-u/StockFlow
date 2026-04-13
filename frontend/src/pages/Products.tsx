@@ -13,6 +13,7 @@ const Products: React.FC = () => {
     fetchProducts();
   }, []);
 
+  
   const fetchProducts = async () => {
     try {
       const response = await productAPI.getAll();

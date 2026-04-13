@@ -12,6 +12,7 @@ const transporter = nodemailer.createTransport({
 
 // Test email connection on startup
 transporter.verify((error, success) => {
+  
   if (error) {
     console.log('Email service not configured, using development mode');
   } else {

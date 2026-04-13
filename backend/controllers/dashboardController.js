@@ -12,7 +12,7 @@ export const getStats = async (req, res) => {
           totalSales: { $sum: '$totalAmount' },
           totalOrders: { $sum: 1 }
         }
-        
+
       }
     ]);
 
@@ -20,6 +20,7 @@ export const getStats = async (req, res) => {
     const totalProducts = await Product.countDocuments();
 
     // Get total customers (unique customers from sales)
+    
     const totalCustomers = await Sale.distinct('customerName').then(customers => 
       customers.filter(customer => customer && customer.trim() !== '').length
     );

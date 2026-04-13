@@ -11,6 +11,8 @@ import SalesHistory from './pages/SalesHistory';
 import Debts from './pages/Debts';
 import Employees from './pages/Employees';
 import SettingsPage from './pages/Settings';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import './index.css';
 
 function App() {
@@ -81,6 +83,14 @@ function App() {
           <Route 
             path="/login" 
             element={!isAuthenticated ? <Login onLogin={handleLogin} /> : <Navigate to="/dashboard" />} 
+          />
+          <Route 
+            path="/forgot-password" 
+            element={!isAuthenticated ? <ForgotPassword /> : <Navigate to="/dashboard" />} 
+          />
+          <Route 
+            path="/reset-password" 
+            element={!isAuthenticated ? <ResetPassword /> : <Navigate to="/dashboard" />} 
           />
           <Route 
             path="/register" 

@@ -11,7 +11,6 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     fetchData();
-    
   }, []);
 
   const fetchData = async () => {

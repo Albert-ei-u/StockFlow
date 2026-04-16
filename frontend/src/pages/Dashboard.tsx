@@ -11,11 +11,12 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     fetchData();
-    
+
   }, []);
 
   const fetchData = async () => {
     try {
+      
       const [summaryData, lowStockData] = await Promise.all([
         reportAPI.getSalesSummary(),
         inventoryAPI.getLowStockAlerts()

@@ -19,6 +19,7 @@ router.post('/register-business', registerBusiness);
 router.post('/verify-email-and-register', verifyEmailAndRegister);
 // Register User (backward compatibility)
 router.post('/register', register);
+
 // Join Business (for employees)
 router.post('/join-business', joinBusiness);
 

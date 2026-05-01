@@ -21,6 +21,7 @@ router.post('/verify-email-and-register', verifyEmailAndRegister);
 router.post('/register', register);
 // Join Business (for employees)
 router.post('/join-business', joinBusiness);
+
 // Login
 router.post('/login', login);
 

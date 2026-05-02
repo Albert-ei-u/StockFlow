@@ -25,6 +25,7 @@ router.post('/join-business', joinBusiness);
 router.post('/login', login);
 // Request password reset
 router.post('/request-password-reset', requestPasswordReset);
+
 // Verify reset code and reset password
 router.post('/verify-reset-code-and-reset-password', verifyResetCodeAndResetPassword);
 

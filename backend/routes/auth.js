@@ -27,6 +27,7 @@ router.post('/login', login);
 router.post('/request-password-reset', requestPasswordReset);
 // Verify reset code and reset password
 router.post('/verify-reset-code-and-reset-password', verifyResetCodeAndResetPassword);
+
 // Get Profile (protected)
 router.get('/profile', protect, getProfile);
 

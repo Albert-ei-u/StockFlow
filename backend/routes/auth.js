@@ -15,7 +15,7 @@ const router = express.Router();
 
 // Register Business Owner (sends verification email)
 router.post('/register-business', registerBusiness);
-
+''
 // Verify email and complete registration
 router.post('/verify-email-and-register', verifyEmailAndRegister);
 

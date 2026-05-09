@@ -23,7 +23,6 @@ router.post('/register', register);
 router.post('/join-business', joinBusiness);
 // Login
 router.post('/login', login);
-
 // Request password reset
 router.post('/request-password-reset', requestPasswordReset);
 

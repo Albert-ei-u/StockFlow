@@ -29,5 +29,4 @@ router.post('/request-password-reset', requestPasswordReset);
 router.post('/verify-reset-code-and-reset-password', verifyResetCodeAndResetPassword);
 // Get Profile (protected)
 router.get('/profile', protect, getProfile);
-
 export default router;

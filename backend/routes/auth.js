@@ -17,7 +17,6 @@ const router = express.Router();
 router.post('/register-business', registerBusiness);
 // Verify email and complete registration
 router.post('/verify-email-and-register', verifyEmailAndRegister);
-
 // Register User (backward compatibility)
 router.post('/register', register);
 

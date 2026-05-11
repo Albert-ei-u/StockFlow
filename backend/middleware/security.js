@@ -6,7 +6,6 @@ import hpp from 'hpp';
 // Custom MongoDB injection protection
 export const sanitizeData = (req, res, next) => {
   const sanitize = (obj) => {
-    if (typeof obj !== 'object' || obj === null) {
       return obj;
     }
     

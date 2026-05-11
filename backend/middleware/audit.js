@@ -93,7 +93,6 @@ export const logSecurityEvent = (eventType) => {
 
     // Log security events
     console.warn('Security Event:', JSON.stringify(securityLog));
-
     next();
   };
 };

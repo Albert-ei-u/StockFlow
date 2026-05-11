@@ -22,7 +22,7 @@ export const productAPI = {
 
 // Sale APIs
 export const saleAPI = {
-
+  
   getAll: () => api.get<Sale[]>('/sales'),
   getById: (id: string) => api.get<Sale>(`/sales/${id}`),
   create: (sale: Partial<Sale>) => api.post<Sale>('/sales', sale),
@@ -32,7 +32,6 @@ export const saleAPI = {
 };
 
 // Inventory APIs
-
 export const inventoryAPI = {
   getAll: () => api.get<Inventory[]>('/inventory'),
   getById: (id: string) => api.get<Inventory>(`/inventory/${id}`),

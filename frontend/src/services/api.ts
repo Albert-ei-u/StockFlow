@@ -22,6 +22,7 @@ export const productAPI = {
 
 // Sale APIs
 export const saleAPI = {
+  
   getAll: () => api.get<Sale[]>('/sales'),
   getById: (id: string) => api.get<Sale>(`/sales/${id}`),
   create: (sale: Partial<Sale>) => api.post<Sale>('/sales', sale),

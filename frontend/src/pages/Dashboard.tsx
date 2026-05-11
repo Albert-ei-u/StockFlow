@@ -84,7 +84,7 @@ const Dashboard: React.FC = () => {
                       Total Orders
                     </dt>
                     <dd className="text-lg font-medium text-gray-900">
-                      {salesSummary?.totalOrders || 0}
+                      {salesSummary?.totalOrders || 0 }
                     </dd>
                   </dl>
                 </div>

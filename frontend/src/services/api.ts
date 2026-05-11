@@ -13,6 +13,7 @@ const api = axios.create({
 // Product APIs
 export const productAPI = {
   getAll: () => api.get<Product[]>('/products'),
+  
   getById: (id: string) => api.get<Product>(`/products/${id}`),
   create: (product: Partial<Product>) => api.post<Product>('/products', product),
   update: (id: string, product: Partial<Product>) => api.put<Product>(`/products/${id}`, product),

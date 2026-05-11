@@ -26,7 +26,7 @@ export const saleAPI = {
   getById: (id: string) => api.get<Sale>(`/sales/${id}`),
   create: (sale: Partial<Sale>) => api.post<Sale>('/sales', sale),
   updateStatus: (id: string, status: string) => api.patch<Sale>(`/sales/${id}/status`, { status }),
-  getByDateRange: (startDate: string, endDate: string) => 
+  getByDateRange: (startDate: string, endDate: string) =>
     api.get<Sale[]>(`/sales/dates/${startDate}/${endDate}`),
 };
 
@@ -34,7 +34,7 @@ export const saleAPI = {
 export const inventoryAPI = {
   getAll: () => api.get<Inventory[]>('/inventory'),
   getById: (id: string) => api.get<Inventory>(`/inventory/${id}`),
-  getLowStockAlerts: ()=> api.get<Inventory[]>('/inventory/low-stock'),
+  getLowStockAlerts: () => api.get<Inventory[]>('/inventory/low-stock'),
   getMovements: (id: string) => api.get(`/inventory/${id}/movements`),
   restock: (id: string, data: { quantity: number; notes?: string; supplier?: string }) =>
     api.post<Inventory>(`/inventory/${id}/restock`, data),

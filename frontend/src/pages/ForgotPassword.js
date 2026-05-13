@@ -31,6 +31,7 @@ const ForgotPassword = () => {
         //  short delay
         setTimeout(() => {
           navigate('/reset-password', { state: { email } });
+          
         }, 2000);
       } else {
         setError(data.message || 'Failed to request password reset');

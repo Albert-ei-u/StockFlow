@@ -27,7 +27,8 @@ const ForgotPassword = () => {
       const data = await response.json();
       if (response.ok) {
         setSuccess(true);
-        // Navigate to reset password page after a short delay
+        // Navigate to reset password page after a
+        //  short delay
         setTimeout(() => {
           navigate('/reset-password', { state: { email } });
         }, 2000);

@@ -10,8 +10,9 @@ const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    
+
     fetchData();
+    
   }, []);
 
   const fetchData = async () => {

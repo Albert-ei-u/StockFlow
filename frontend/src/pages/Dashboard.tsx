@@ -9,7 +9,6 @@ const Dashboard: React.FC = () => {
   const [lowStockItems, setLowStockItems] = useState<Inventory[]>([]);
   const [loading, setLoading] = useState(true);
 
-  
   useEffect(() => {
     fetchData();
   }, []);

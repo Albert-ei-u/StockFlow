@@ -18,11 +18,10 @@ const Products: React.FC = () => {
       const response = await productAPI.getAll();
       setProducts(response.data);
     } catch (error) {
-      
       console.error('Error fetching products:', error);
     } finally {
       setLoading(false);
-
+      
     }
   };
 //handle delete

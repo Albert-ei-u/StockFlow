@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, KeyRound, ArrowLeft } from 'lucide-react';
+import { authAPI } from '../services/api';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -15,29 +16,19 @@ const ForgotPassword = () => {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/request-password-reset', {
-        method: 'POST',
-        headers: {
-          
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email })
-      });
+      const response = await authAPI.requestPasswordReset({ email });
 
-      const data = await response.json();
-      if (response.ok) {
+      if (response.status === 200) {
         setSuccess(true);
-        // Navigate to reset password page after a
-        //  short delay
         setTimeout(() => {
           navigate('/reset-password', { state: { email } });
-          
         }, 2000);
       } else {
-        setError(data.message || 'Failed to request password reset');
+        setError(response.data?.message || 'Failed to request password reset');
       }
     } catch (err) {
-      setError('Network error. Please try again.');
+      console.error('Forgot password error:', err);
+      setError(err.response?.data?.message || 'Network error. Please try again.');
     } finally {
       setLoading(false);
     }

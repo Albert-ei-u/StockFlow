@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Lock, Hash, CheckCircle2, ArrowLeft, Eye, EyeOff } from 'lucide-react';
+import { authAPI } from '../services/api';
 
 const ResetPassword = () => {
   const location = useLocation();
@@ -48,30 +49,23 @@ const ResetPassword = () => {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/verify-reset-code-and-reset-password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          email: formData.email,
-          code: formData.code,
-          newPassword: formData.newPassword
-        })
+      const response = await authAPI.verifyResetCodeAndResetPassword({ 
+        email: formData.email,
+        code: formData.code,
+        newPassword: formData.newPassword
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
+      if (response.status === 200) {
         setSuccess(true);
         setTimeout(() => {
           navigate('/login');
         }, 3000);
       } else {
-        setError(data.message || 'Failed to reset password');
+        setError(response.data?.message || 'Failed to reset password');
       }
     } catch (err) {
-      setError('Network error. Please try again.');
+      console.error('Reset password error:', err);
+      setError(err.response?.data?.message || 'Network error. Please try again.');
     } finally {
       setLoading(false);
     }

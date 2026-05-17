@@ -12,72 +12,44 @@ const generateToken = (id) => {
   });
 };
 
-// Register Business Owner (simplified - no email verification)
+// Register Business Owner (Step 1: Send verification email)
 export const registerBusiness = async (req, res) => {
   try {
     const { name, email, password, businessName, businessDescription } = req.body;
+    
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists with this email' });
     }
 
-    //Check if business already exists
+    // Check if business already exists
     const existingBusiness = await Business.findOne({ name: businessName });
     if (existingBusiness) {
       return res.status(400).json({ message: 'Business already exists with this name' });
     }
 
-    // Generate unique business code
-    const businessCode = generateBusinessCode();
+    // Generate verification code
+    const verificationCode = generateVerificationCode();
+    
+    // Send verification email
+    const emailSent = await sendVerificationEmail(email, verificationCode, 'email_verification');
+    
+    if (!emailSent) {
+      return res.status(500).json({ message: 'Failed to send verification email' });
+    }
 
-    // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    // Create business
-    const business = new Business({
-      name: businessName,
-      description: businessDescription,
-      businessCode
-    });
-    await business.save();
-
-    // Create user
-    const user = new User({
-      name,
-      email,
-      password: hashedPassword,
-      role: 'owner',
-      businessId: business._id
-    });
-    await user.save();
-
-    // Generate token
-    const token = generateToken(user._id);
-
-    res.status(201).json({
-      message: 'Business registered successfully',
-      token,
-      user: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        businessId: user.businessId
-      },
-      business: {
-        _id: business._id,
-        name: business.name,
-        description: business.description,
-        businessCode: business.businessCode
-      }
+    res.status(200).json({
+      message: 'Verification code sent to your email',
+      requiresVerification: true,
+      email: email
     });
   } catch (error) {
     console.error('Register business error:', error);
-    res.status(500).json({ message: 'Server error during registration' });
+    res.status(500).json({ message: 'Server error during registration request' });
   }
 };
+
 
 // Generate Business Code
 const generateBusinessCode = () => {
@@ -258,13 +230,8 @@ export const getProfile = async (req, res) => {
 // New function to verify email and complete registration
 export const verifyEmailAndRegister = async (req, res) => {
   try {
-    console.log('🔍 Backend verification started');
-    console.log('📧 Request body:', req.body);
-    
     const { email, code, name, password, businessName, businessDescription } = req.body;
     
-    console.log('🔍 Looking for verification code with:', { email, code, purpose: 'email_verification' });
-
     // Verify the code
     const verification = await VerificationCode.findOne({
       email,
@@ -274,28 +241,26 @@ export const verifyEmailAndRegister = async (req, res) => {
       expiresAt: { $gt: Date.now() }
     });
 
-    console.log('📋 Found verification record:', verification);
-
     if (!verification) {
-      console.log('❌ No valid verification code found');
       return res.status(400).json({ message: 'Invalid or expired verification code' });
     }
-
-    console.log('✅ Verification code is valid');
 
     // Mark code as used
     verification.isUsed = true;
     await verification.save();
-    console.log('💾 Marked verification code as used');
+
+    // Double check if user already exists (just in case)
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: 'User already exists with this email' });
+    }
 
     // Generate unique business code
     const businessCode = generateBusinessCode();
-    console.log('🏢 Generated business code:', businessCode);
 
     // Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    console.log('🔐 Password hashed');
 
     // Create business
     const business = new Business({
@@ -304,7 +269,6 @@ export const verifyEmailAndRegister = async (req, res) => {
       businessCode
     });
     await business.save();
-    console.log('🏢 Business created:', business._id);
 
     // Create user
     const user = new User({
@@ -315,13 +279,11 @@ export const verifyEmailAndRegister = async (req, res) => {
       businessId: business._id
     });
     await user.save();
-    console.log('👤 User created:', user._id);
 
     // Generate token
     const token = generateToken(user._id);
-    console.log('🎫 JWT token generated');
 
-    const responseData = {
+    res.status(201).json({
       message: 'Registration completed successfully',
       token,
       user: {
@@ -337,15 +299,13 @@ export const verifyEmailAndRegister = async (req, res) => {
         description: business.description,
         businessCode: business.businessCode
       }
-    };
-
-    console.log('📤 Sending response:', responseData);
-    res.status(201).json(responseData);
-    console.log('✅ Registration completed successfully');
+    });
   } catch (error) {
-    console.error('❌ Verification error:', error);
+    console.error('Verification error:', error);
+    res.status(500).json({ message: 'Server error during registration completion' });
   }
 };
+
 
 // New function to request password reset
 export const requestPasswordReset = async (req, res) => {

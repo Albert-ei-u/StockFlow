@@ -24,9 +24,12 @@ export const authAPI = {
   register: (userData) => api.post('/auth/register', userData),
   registerBusiness: (businessData) => api.post('/auth/register-business', businessData),
   verifyEmailAndRegister: (verificationData) => api.post('/auth/verify-email-and-register', verificationData),
+  requestPasswordReset: (emailData) => api.post('/auth/request-password-reset', emailData),
+  verifyResetCodeAndResetPassword: (resetData) => api.post('/auth/verify-reset-code-and-reset-password', resetData),
   joinBusiness: (businessData) => api.post('/auth/join-business', businessData),
   getProfile: () => api.get('/auth/profile'),
 };
+
 
 // Product APIs
 export const productAPI = {

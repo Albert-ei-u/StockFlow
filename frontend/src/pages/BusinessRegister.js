@@ -8,7 +8,8 @@ import {
   FileText,
   ArrowLeft,
   Eye,
-  EyeOff
+  EyeOff,
+  Hash
 } from 'lucide-react';
 import { authAPI } from '../services/api';
 
@@ -26,6 +27,9 @@ const BusinessRegister = ({ onLogin }) => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [verificationStep, setVerificationStep] = useState(false);
+  const [verificationCode, setVerificationCode] = useState('');
+  const [verificationLoading, setVerificationLoading] = useState(false);
   const [businessCode, setBusinessCode] = useState('');
   const navigate = useNavigate();
 
@@ -97,6 +101,7 @@ const BusinessRegister = ({ onLogin }) => {
     }
     
     setLoading(true);
+    setErrors({});
     
     try {
       const response = await authAPI.registerBusiness({
@@ -107,22 +112,57 @@ const BusinessRegister = ({ onLogin }) => {
         businessDescription: formData.businessDescription
       });
       
-      // Direct registration success
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
-      localStorage.setItem('business', JSON.stringify(response.data.business));
-      
-      // Show success modal with business code
-      setBusinessCode(response.data.business.businessCode);
-      setShowSuccessModal(true);
-      
-      onLogin(response.data.user, response.data.token);
+      if (response.data.requiresVerification) {
+        setVerificationStep(true);
+      } else {
+        // Direct registration (if verification was skipped by backend for development)
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        localStorage.setItem('business', JSON.stringify(response.data.business));
+        
+        setBusinessCode(response.data.business.businessCode);
+        setShowSuccessModal(true);
+        onLogin(response.data.user, response.data.token);
+      }
     } catch (error) {
       console.error('Registration error:', error);
       const errorMessage = error.response?.data?.message || 'Registration failed. Please try again.';
       setErrors({ submit: errorMessage });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleVerifyCode = async (e) => {
+    e.preventDefault();
+    
+    if (!verificationCode || verificationCode.length !== 6) {
+      setErrors({ verification: 'Please enter a valid 6-digit code' });
+      return;
+    }
+
+    setVerificationLoading(true);
+    setErrors({});
+    
+    try {
+      const response = await authAPI.verifyEmailAndRegister({
+        ...formData,
+        code: verificationCode
+      });
+
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      localStorage.setItem('business', JSON.stringify(response.data.business));
+      
+      setBusinessCode(response.data.business.businessCode);
+      setShowSuccessModal(true);
+      onLogin(response.data.user, response.data.token);
+    } catch (error) {
+      console.error('Verification error:', error);
+      const errorMessage = error.response?.data?.message || 'Verification failed. Please try again.';
+      setErrors({ verification: errorMessage });
+    } finally {
+      setVerificationLoading(false);
     }
   };
 
@@ -144,15 +184,74 @@ const BusinessRegister = ({ onLogin }) => {
             <Building className="h-6 w-6 text-white" />
           </div>
           <h2 className="mt-6 text-3xl font-bold text-gray-900">
-            Register Your Business
+            {verificationStep ? 'Verify Your Email' : 'Register Your Business'}
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            Create your business account and get your unique business code
+            {verificationStep 
+              ? `We've sent a 6-digit code to ${formData.email}` 
+              : 'Create your business account and get your unique business code'}
           </p>
         </div>
 
-        {/* Form */}
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        {verificationStep ? (
+          /* Verification Form */
+          <form className="mt-8 space-y-6" onSubmit={handleVerifyCode}>
+            {errors.verification && (
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
+                {errors.verification}
+              </div>
+            )}
+
+            <div>
+              <label htmlFor="verificationCode" className="block text-sm font-medium text-gray-700">
+                6-Digit Code
+              </label>
+              <div className="mt-1 relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Hash className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  id="verificationCode"
+                  name="verificationCode"
+                  type="text"
+                  required
+                  maxLength="6"
+                  value={verificationCode}
+                  onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, ''))}
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition tracking-widest text-center text-xl font-bold"
+                  placeholder="000000"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <button
+                type="submit"
+                disabled={verificationLoading}
+                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 transition"
+              >
+                {verificationLoading ? (
+                  <div className="flex items-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Verifying...
+                  </div>
+                ) : (
+                  'Verify and Register'
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setVerificationStep(false)}
+                className="w-full text-sm text-gray-600 hover:text-gray-900"
+              >
+                Back to registration
+              </button>
+            </div>
+          </form>
+        ) : (
+          /* Registration Form */
+          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {errors.submit && (
             <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg">
               {errors.submit}
@@ -327,6 +426,7 @@ const BusinessRegister = ({ onLogin }) => {
             </button>
           </div>
         </form>
+        )}
 
         {/* Login Link */}
         <div className="text-center">

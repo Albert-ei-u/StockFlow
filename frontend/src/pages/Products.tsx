@@ -11,7 +11,6 @@ const Products: React.FC = () => {
 
   useEffect(() => {
     fetchProducts();
-    
   }, []);
   
   const fetchProducts = async () => {

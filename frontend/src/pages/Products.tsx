@@ -21,6 +21,7 @@ const Products: React.FC = () => {
       console.error('Error fetching products:', error);
     } finally {
       setLoading(false);
+      
     }
   };
 //handle delete

@@ -23,8 +23,7 @@ export const productAPI = {
 // Sale APIs
 export const saleAPI = {
   getAll: () => api.get<Sale[]>('/sales'),
-  getById: (id: string) => api.get<Sale>(`/s
-    ales/${id}`),
+  getById: (id: string) => api.get<Sale>(`/sales/${id}`),
   create: (sale: Partial<Sale>) => api.post<Sale>('/sales', sale),
   updateStatus: (id: string, status: string) => api.patch<Sale>(`/sales/${id}/status`, { status }),
   getByDateRange: (startDate: string, endDate: string) =>

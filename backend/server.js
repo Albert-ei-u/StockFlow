@@ -1,6 +1,6 @@
+import "dotenv/config.js";
 import express from "express";
 import mongoose from "mongoose";
-import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 
@@ -11,8 +11,6 @@ import productRoutes from './routes/products.js';
 import saleRoutes from './routes/sales.js';
 import inventoryRoutes from './routes/inventory.js';
 import reportRoutes from './routes/reports.js';
-
-dotenv.config();
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename); 

@@ -17,6 +17,7 @@ const Products: React.FC = () => {
     try {
       const response = await productAPI.getAll();
       setProducts(response.data);
+      
     } catch (error) {
       console.error('Error fetching products:', error);
     } finally {
